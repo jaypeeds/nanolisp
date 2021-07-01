@@ -34,7 +34,7 @@ cdr, cons et cond.
 
 ## Le bilan
 Il a fallu faire des ajustements, l'interpréteur lit un fichier source conventionnel SOURCE.NLSP. On peut choisir le nom
-que l'on veut puis faire un lien symbolique avant éxécution. La pluspart des fonctions, notamment la définition de 
+que l'on veut puis faire un lien symbolique avant éxécution. La plupart des fonctions, notamment la définition de 
 fonction, sont opérationnelles.
 Les conventions de nommage devrait être plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR
 mais pour être exploitables, ces opérateurs devraient tous avoir un résultat de type S-Exp, ou SGRAPHE dans ce code.
