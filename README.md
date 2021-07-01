@@ -6,10 +6,10 @@ Dans les années 80, bien avant que cette tendance ne devienne possible économi
 certains passionnés ont entrevu les développemet possibles d'une robotique personnelle.
 C'est ainsi qu'est née la revue "Micros et Robots" dédiée à cette thématique. Sa vie fut brève, seulement 16 numéros
 ont été publiés. En 1985, une série de trois articles sur le langage LISP sous la plume de JM Husson, commence au numéro
-15. Quinze, seize, mais où est passé le troisième volet ? Cette revue était un rejeton d'une institution datant des 
+15. Quinze, seize, mais où est passé le troisième volet ? Cette revue était le rejeton d'une institution datant des 
 années 30, et c'est dans la revue mère, Radio-Plan, que le troisième volet est paru. On retrouve assez facilement des 
-scans de qualité suffisante des ces revues, sur le site abandonware ou sur web.archive.org.
-Le code est en Pascal, langage mainstream à cette époque, grâce à Apple et le système UCSD sur Apple ][, puis plus tard
+scans de qualité suffisante de ces revues, sur le site "abandonware" ou sur "web.archive.org".
+Le code est en Pascal, langage mainstream à cette époque, grâce à Apple et le système UCSD sur Apple II, puis plus tard
 MacPascal ou TurboPascal sur PC.
 Ma motivation est multiple avec une grande curiosité pour commencer, et l'envie de comprendre, explorer, tester les 
 limites, peut-être les repousser.
@@ -36,6 +36,9 @@ cdr, cons et cond.
 Il a fallu faire des ajustements, l'interpréteur lit un fichier source conventionnel SOURCE.NLSP. On peut choisir le nom
 que l'on veut puis faire un lien symbolique avant éxécution. La pluspart des fonctions, notamment la définition de 
 fonction, sont opérationnelles.
+Les conventions de nommage devrait être plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR
+mais pour être exploitables, ces opérateurs devraient tous avoir un résultat de type S-Exp, ou SGRAPHE dans ce code.
+FNULL ne respecte pas cette convention.
 
 ## Et ensuite ? 
 - Implémenter l'arithmétique entière. .
