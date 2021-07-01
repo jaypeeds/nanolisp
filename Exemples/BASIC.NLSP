@@ -1,0 +1,7 @@
+(TRACE)
+'(A B)
+(CAR '(A B C))
+(OBLIST)
+(CAR (CDR '(A B C)))
+(QUIT)
+

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="11"/>
+    <BuildModes Active="Default"/>
+    <Units Count="2">
+      <Unit0>
+        <Filename Value="NanoLisp.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="nanolisp2"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="574"/>
+        <CursorPos X="58" Y="608"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="nanolisp.lpr"/>
+        <UnitName Value="nanolisp2"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="650"/>
+        <CursorPos Y="685"/>
+        <UsageCount Value="10"/>
+      </Unit1>
+    </Units>
+    <JumpHistory Count="8" HistoryIndex="7">
+      <Position1>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="685"/>
+      </Position1>
+      <Position2>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="93" Column="18" TopLine="58"/>
+      </Position2>
+      <Position3>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="226" Column="53" TopLine="219"/>
+      </Position3>
+      <Position4>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="410" Column="26" TopLine="392"/>
+      </Position4>
+      <Position5>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="326" Column="21" TopLine="311"/>
+      </Position5>
+      <Position6>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="489" Column="25" TopLine="480"/>
+      </Position6>
+      <Position7>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="608" Column="60" TopLine="574"/>
+      </Position7>
+      <Position8>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="93" Column="25" TopLine="75"/>
+      </Position8>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

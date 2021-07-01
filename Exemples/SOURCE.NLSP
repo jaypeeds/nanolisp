@@ -1,0 +1,6 @@
+(UNTRACE)
+(SETQ Neveux '(Riri Fifi Loulou))
+(CAR Neveux)
+'Loulou_?
+(CAR (CDR (CDR Neveux)))
+(QUIT)

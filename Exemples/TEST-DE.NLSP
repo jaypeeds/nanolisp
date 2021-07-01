@@ -1,0 +1,4 @@
+(UNTRACE)
+(DE DUPLIQUE(X) (CONS X '(X))) 
+(DUPLIQUE 'X)
+(QUIT) 
