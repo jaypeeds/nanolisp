@@ -43,5 +43,8 @@ FNULL ne respecte pas cette convention.
 ## Et ensuite ? 
 - Implémenter l'arithmétique entière. .
 - Permettre des commentaires pour documenter le code. 
-La méthode consiste à ajouter la syntaxe nouvelle et à analyser le crash sous débugger et modifier le code en fonction.
+
+La méthode consiste à introduire la syntaxe nouvelle dans le source à intepréter, puis à analyser le crash sous débugger et 
+modifier le code en fonction.
+
 - Porter en C simple.
