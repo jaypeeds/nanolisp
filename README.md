@@ -36,13 +36,14 @@ cdr, cons et cond.
 Il a fallu faire des ajustements, l'interpréteur lit un fichier source conventionnel SOURCE.NLSP. On peut choisir le nom
 que l'on veut puis faire un lien symbolique avant éxécution. La plupart des fonctions, notamment la définition de 
 fonction, sont opérationnelles.
-Les conventions de nommage devrait être plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR
+Les conventions de nommage devraient être plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR
 mais pour être exploitables, ces opérateurs devraient tous avoir un résultat de type S-Exp, ou SGRAPHE dans ce code.
 FNULL ne respecte pas cette convention.
 
 ## Et ensuite ? 
 - Implémenter l'arithmétique entière. .
 - Permettre des commentaires pour documenter le code. 
+- Permettre la lecture à la console.
 
 La méthode consiste à introduire la syntaxe nouvelle dans le source à intepréter, puis à analyser le crash sous débugger et 
 modifier le code en fonction.
