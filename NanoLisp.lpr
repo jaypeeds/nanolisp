@@ -653,9 +653,9 @@ BEGIN
   NEW(PPSOURCE);
   PPSOURCE:=NOUVATOM(PPSOURCE, './SOURCE');
   PSOURCE:=PPSOURCE^.ATOME;
-END;(*INIT)
+END;(*INIT*)
 
-* Corps du programme principal *)
+(* Corps du programme principal *)
 BEGIN
     FINSESS:=FALSE;
     INIT;
