@@ -21,11 +21,11 @@ d'Erlang avec LFE ou Clojerl, et même sur les micro-contrôleurs avec uLisp.com
 Je me souviens avoir dactylographié tout le code lors de sa parution. Aujourd'hui, j'ai tenté une méthode plus efficace,
 qui a plus ou moins réussi. Les listings ont été extraits par copie d'écran en séparant les colonnes publiées 
 côte-à-côte, puis transformés en PDF et déposés sur un Google drive. Le service Google permet de faire de l'OCR sur de 
-tels documents si on les ouvre en tant que Google Doc.
-L'IDE de choix pour le Pascal est Lazarus. Sur Mac, c'est assez compliqué à faire fonctionner, comme tous les outils 
-hors Apple. Malgré les indications trouvées, malgré le certificat de signature du code, je n'ai pas réussi à passer la 
-sécurité qui assure que le débugger gdb ou lldb s'utilse de manière sûre. Je me suis donc tourné vers Linux pour avancer
-plus vite.
+tels documents, si on les ouvre en tant que Google Doc.
+L'IDE de choix pour le Pascal, de nos jours, est Lazarus. Sur Mac, j'ai essayé, mais c'est assez compliqué à faire fonctionner, 
+comme tous les outils en dehors de ceux d'Apple. Malgré les indications trouvées, malgré le certificat de signature du code, 
+je n'ai pas réussi à passer la  sécurité qui assure que le débugger gdb ou lldb soit utilisé de manière sûre. Je me suis 
+donc tourné vers Linux pour avancer plus rapidement.
 Si on considère le fait que la plupart des implémentations de Lisp ont été écrites en Assembleurs divers, Pascal, c'est 
 presque de la triche ! Il existe des versions plus récentes, écrites en C, mais elles ont souvent une perspective 
 moderne et avec la connaissance actuelle des langages de programmation (provenant de C++/Java). La démarche est 
