@@ -2,7 +2,7 @@
 
 ## Motivation
 
-Dans les années 80, bien avant que cette tendance ne devienne possible économiquement pour le plus grand nombre
+Dans les années 80, bien avant que cette tendance ne devienne possible économiquement pour le plus grand nombre,
 certains passionnés ont entrevu les développements possibles d'une robotique personnelle.
 C'est ainsi qu'est née la revue "Micros et Robots" dédiée à cette thématique. Sa vie fut brève, seulement 16 numéros
 ont été publiés. En 1985, une série de trois articles sur le langage LISP sous la plume de JM Husson, commence au numéro
