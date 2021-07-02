@@ -1,5 +1,7 @@
 (UNTRACE)
+'Riri_etc
 (SETQ Neveux '(Riri Fifi Loulou))
+'Riri_1er
 (CAR Neveux)
 'Loulou_?
 (CAR (CDR (CDR Neveux)))
