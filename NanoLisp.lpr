@@ -17,6 +17,7 @@ CONST
   VIDE='';
   AG='{';
   AD='}';
+  PLUS='+';
 
 TYPE
   SMALLSTRING=STRING (*[MAXCHAINE]*) ;
@@ -48,7 +49,7 @@ TYPE
   INTERACTIVE=TEXT;
 
 VAR (* ---- Globales ---- *)
-  NILE, TRU, AQUOTE, S, M, PSOURCE:SGRAPHE;
+  NILE, TRU, AQUOTE, S, M, PSOURCE, ZERO:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
@@ -69,6 +70,16 @@ begin
            ((nil <> s^.pname) or (0 <>length(s^.pname^))) and
            isNumeric(s^.pname^);
 end;
+function nullp(s:sgraphe): boolean;
+begin
+  nullp:=(s=NIL) or (s=NILE);
+end;
+
+function autoevaluatedp(s:sgraphe): boolean;
+begin
+  autoEvaluatedp := (s=(s^.val)) and not nullp(s);
+end;
+
 (***** FONCTIONS UTILITAIRES ******)
 function isNumeric(const potentialNumeric: string): boolean;
 (* Empruntée à RosettaCode.org *)
@@ -99,11 +110,6 @@ BEGIN
   WRITELN('***');
   ERREUR:= TRUE;
   FERREUR:= NILE;
-END;
-
-FUNCTION FNULL(S:SGRAPHE): BOOLEAN;
-BEGIN
-  FNULL:=(S=NIL) OR (S=NILE);
 END;
 
 PROCEDURE OBPRINT;
@@ -173,10 +179,10 @@ END;
 FUNCTION FCAR(S:SGRAPHE) : SGRAPHE;
 (* LE CAR *)
 BEGIN
-  IF FNULL(S) THEN
+  IF nullp(S) THEN
     FCAR:=NILE
   ELSE
-    IF S^.SORTE=LISTE THEN
+    IF listp(S) THEN
       FCAR:=S^.CAR
     ELSE
       if numberp(S) then
@@ -188,10 +194,10 @@ END;
 FUNCTION FCDR(S:SGRAPHE):SGRAPHE; (* LE CDR *)
 
 BEGIN
-  IF FNULL(S) THEN
+  IF nullp(S) THEN
     FCDR:=NILE
   ELSE
-    IF S^.SORTE=LISTE THEN
+    IF listp(S) THEN
       FCDR:=S^.CDR
     ELSE
       if numberp(S) then
@@ -228,7 +234,7 @@ VAR
   (* Scan Page 41 Col. 1 *)
 
 BEGIN
-  IF (S2^.SORTE=ATOME) AND NOT FNULL(S2) THEN
+  IF (S2^.SORTE=ATOME) AND NOT nullp(S2) THEN
     FCONS:=FERREUR('CONS', S2)
   ELSE
   BEGIN
@@ -385,7 +391,7 @@ PROCEDURE PRINT(S:SGRAPHE);
          END;
        (* Corps de PRINT1 *)
        BEGIN
-          IF FNULL(S) THEN
+          IF nullp(S) THEN
              PRINTATOM(NILE)
           ELSE
               IF S^.SORTE=ATOME THEN
@@ -404,12 +410,12 @@ PROCEDURE PRINT(S:SGRAPHE);
                       PRINT(FCAR(FCDR(S))); (* ON REPART COMME POUR UNE NOUVELLE LISTE *)
                     END ELSE
                     BEGIN
-                      IF (NOT FNULL(S^.CAR)) AND (S^.CAR^.SORTE=LISTE) AND (S^.CAR^.CAR <> AQUOTE) THEN
+                      IF (NOT nullp(S^.CAR)) AND listp(S^.CAR) AND (S^.CAR^.CAR <> AQUOTE) THEN
                          WRITE(SPC,PG); (* SUITE DE LISTE *)
 
                       PRINT1(FCAR(S)); (* IMPRESSION DU CAR *)
 
-                      IF FNULL(FCDR(S)) THEN
+                      IF nullp(FCDR(S)) THEN
                          WRITE(PD,SPC) (* FIN DE LISTE *)
                       ELSE
                          PRINT1(FCDR(S)); (* IMPRESSION DU CDR *)
@@ -419,7 +425,7 @@ PROCEDURE PRINT(S:SGRAPHE);
   (* Corps de PRINT *)
    BEGIN
      BLANCPRINT:=FALSE;
-     IF (S^.SORTE=LISTE) AND (S^.CAR <> AQUOTE) THEN
+     IF listp(S) AND (S^.CAR <> AQUOTE) THEN
         WRITE(SPC,PG);
      PRINT1(S);
    END;
@@ -438,14 +444,14 @@ BEGIN
   IF TRACE THEN BEGIN
     WRITELN;
     WRITE('PAIRLIS ', FD, PG);
-    (*IF NOT FNULL(NOMS) THEN*)
+    (*IF NOT nullp(NOMS) THEN*)
         PRINT(NOMS);
     WRITE(DOT);
-    (*IF NOT FNULL(VALS) THEN *)
+    (*IF NOT nullp(VALS) THEN *)
         PRINT(VALS);
     WRITELN(PD);
   END;
-  IF NOMS^.SORTE=LISTE THEN
+  IF listp(NOMS) THEN
     BEGIN
       (* Va au fond de la liste d'abord puis revient vers la tête *)
       PAIRLIS(NOMS^.CDR,VALS^.CDR);
@@ -453,7 +459,7 @@ BEGIN
       NOMS^.CAR^.VAL:=FCAR(VALS);
       VALS^.CAR:=SAVE;
     END ELSE
-      IF NOT FNULL(NOMS) THEN
+      IF NOT nullp(NOMS) THEN
         BEGIN
           SAVE:=NOMS^.VAL;
           NOMS^.VAL:=VALS;
@@ -529,7 +535,7 @@ BEGIN
       PRINT(ARGS);
       (* WRITELN;*)
     END;
-    (* TODO FNULL(FN) ? *)
+    (* TODO nullp(FN) ? *)
     IF (FN=NILE) THEN
       APPLY:=FERREUR('APPLY', FN)
     ELSE IF (FN^.SORTE=ATOME) THEN
@@ -573,7 +579,7 @@ FUNCTION EVLIS(ARGS: SGRAPHE): SGRAPHE;
 (* EVALUE LES COMPOSANTS D'UNE LISTE *)
 
 BEGIN
-  IF FNULL(ARGS) THEN
+  IF nullp(ARGS) THEN
     EVLIS:=NILE
   ELSE
     EVLIS:=FCONS(EVAL(FCAR(ARGS)), EVLIS(FCDR(ARGS)));
@@ -583,14 +589,14 @@ FUNCTION EVCOND(L:SGRAPHE):SGRAPHE;
 (*EXECUTE UNE CONDITIONNELLE *)
 
 BEGIN
-  IF NOT FNULL(EVAL(FCAR(FCAR(L)))) THEN
+  IF NOT nullp(EVAL(FCAR(FCAR(L)))) THEN
     BEGIN
       IF TRACE THEN
          WRITE(FD,'EVAL CAR', SPC);
       EVCOND:=APPLISTE(FCDR(FCAR(L)));
       END
   ELSE
-    IF NOT FNULL(FCDR(L)) THEN
+    IF NOT nullp(FCDR(L)) THEN
       BEGIN
         IF TRACE THEN
            WRITE(FD,'EVAL CDR', SPC);
@@ -613,6 +619,74 @@ BEGIN
     END;
 END;
 
+FUNCTION FNULL(S:SGRAPHE): SGRAPHE;
+BEGIN
+  IF S=NILE THEN
+    FNULL:=TRU
+  ELSE
+    FNULL:=NILE
+END;
+
+function fadd(s:sgraphe): sgraphe;
+var
+  isomme1, isomme2: integer;
+  somme: string;
+  errCode1, errCode2: integer;
+  s1, s2: sgraphe;
+begin
+  if nullp(s) then
+    fadd:=zero
+  else
+  begin
+    if atomp(s) then
+      begin
+        if numberp(s) then
+          val(s^.pname^, isomme1, errCode1);
+          if errCode1=0 then
+            begin
+              (* Si le nombre existe, on le réutilise *)
+              s1:=FINDATOM(s^.pname^);
+              if not nullp(s1) then
+                fadd:=s1
+              else
+                (* Sinon on le crée *)
+                fadd:=nouvatom(oblist, s^.pname^)^.atome;
+            end
+        else
+        begin
+          fadd:=ferreur('+', s);
+        end;
+      end
+      else (* Reduction de la liste par l'addition *)
+      begin
+        s1:=fadd(fcar(s));
+        val(s1^.pname^,isomme1,errCode1);
+        s2:=fadd(fcdr(s));
+        val(s2^.pname^,isomme2,errCode2);
+        if (errCode1<>0) or (errCode2<>0) then
+          fadd:=ferreur(PLUS,s)
+        else
+        begin
+           s1:=fadd(fcar(s));
+           val(s1^.PNAME^, isomme1, errCode1);
+           s2:=fadd(fcdr(s));
+           val(s2^.PNAME^, isomme2, errCode2);
+           if (errCode1<>0) or (errCode2<>0) then
+              fadd:=ferreur(PLUS, s)
+           else
+           begin
+              str(isomme1 + isomme2, somme);
+              s1:=FINDATOM(somme);
+              if not nullp(s1) then
+                fadd:=s1
+              else
+                fadd:=nouvatom(oblist, somme)^.atome;
+           end
+        end;
+      end;
+  end;
+end;
+(*********** LA FONCTION EVAL **********)
 FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
 (* L'EVALUATEUR :
   SI LE PARAMETRE EST UN ATOME - ) REND SA VALEUR SINON
@@ -637,7 +711,7 @@ BEGIN
       (* WRITELN;*)
     END;
   IF E^.SORTE=ATOME THEN
-    IF (E^.VAL=NIL) OR FNULL(E) THEN
+    IF (E^.VAL=NIL) OR nullp(E) THEN
       BEGIN
         EVAL :=FERREUR('EXPRESSION INDEFINIE' , E);
         EXIT(*EVAL*);
@@ -658,6 +732,7 @@ BEGIN
                                       (* Scan Page 43 Col. 2 *)
                                       EVAL:=FINDATOM('UNTRACE') END ELSE
       IF S^.PNAME^='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
+      IF S^.PNAME^=PLUS         THEN EVAL:=FADD(FCDR(E)) ELSE
       IF S^.PNAME^='DE'         THEN EVAL:=FDE(FCDR(E))
       ELSE
         EVAL:=APPLY(S,EVLIS(FCDR(E)))
@@ -697,6 +772,8 @@ BEGIN
   OBCOUR:=NOUVATOM(OBCOUR, 'LOAD');
   OBCOUR:=NOUVATOM(OBCOUR, 'OBLIST');
   OBCOUR:=NOUVATOM(OBCOUR, 'QUIT');
+  OBCOUR:=NOUVATOM(OBCOUR, '0'); zero:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, PLUS);
 
   TRU^.VAL:=TRU;
   NILE^.VAL:=NILE;

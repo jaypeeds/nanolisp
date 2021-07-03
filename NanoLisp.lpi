@@ -29,6 +29,7 @@
       <Unit0>
         <Filename Value="NanoLisp.lpr"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="nanolisp"/>
       </Unit0>
     </Units>
   </ProjectOptions>
