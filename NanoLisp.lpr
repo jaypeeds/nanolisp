@@ -2,21 +2,24 @@
 PROGRAM nanolisp(INPUT, OUTPUT);
 
 CONST
-  MAXCHAINE=12; (* LES NOMS AURONT 12 CARACTERES MAXIMUM *)
+  MAXCHAINE=255;(* LES NOMS AURONT 12 CARACTERES MAXIMUM *)
   QT='''';
-  SPC=' ';
-  PG='(';
-  PD=')';
-  DOT='.';
-  VIDE='';
-  FD='->';
+  GUIL='"';
+  BAR='|';
   TAB=CHR(9);   (* Séparateurs non-imprimables *)
   CR=CHR(13);
   LF=CHR(10);
-
+  FD='->';
+  DOT='.';
+  SPC=' ';
+  PG='(';
+  PD=')';
+  VIDE='';
+  AG='{';
+  AD='}';
 
 TYPE
-  SMALLSTRING=STRING[MAXCHAINE];
+  SMALLSTRING=STRING (*[MAXCHAINE]*) ;
   TYPTOKEN=(PGAUCHE, PDROITE,APOS, SYMBOLE);
   (* 5 TYPES DE CARACTERES LUS : PARENTHESE GAUCHE, DROITE, APOSTROPHE
      ET TOUS LES AUTRES *)
@@ -50,6 +53,42 @@ VAR (* ---- Globales ---- *)
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
 PROCEDURE PRINT(S:SGRAPHE); FORWARD;
+function isNumeric(const potentialNumeric: string): boolean; forward;
+(********** PREDICATS ******************)
+function atomp(s:sgraphe): boolean;
+begin
+  atomp:=(s^.sorte=ATOME);
+end;
+function listp(s:sgraphe): boolean;
+begin
+  listp:=(s^.sorte=LISTE);
+end;
+function numberp(s:sgraphe): boolean;
+begin
+  numberp:=atomp(s) and
+           ((nil <> s^.pname) or (0 <>length(s^.pname^))) and
+           isNumeric(s^.pname^);
+end;
+(***** FONCTIONS UTILITAIRES ******)
+function isNumeric(const potentialNumeric: string): boolean;
+(* Empruntée à RosettaCode.org *)
+var
+   potentialInteger: integer;
+   potentialReal: real;
+   integerError: integer;
+   realError: integer;
+begin
+  integerError := 0;
+  realError := 0;
+
+   (* system.val attempts to convert numerical value representations.
+      It accepts all notations as they are accepted by the language,
+      as well as the '0x' (or '0X') prefix for hexadecimal values. *)
+   val(potentialNumeric, potentialInteger, integerError);
+   val(potentialNumeric, potentialReal, realError);
+
+   isNumeric :=((integerError = 0) or (realError = 0));
+end;
 (***** FONCTIONS UTILITAIRES ******)
 
 FUNCTION FERREUR(MESSAGE:STRING; S:SGRAPHE) :SGRAPHE;
@@ -98,7 +137,11 @@ BEGIN
   POSITION^.ATOME^.SORTE:= ATOME;
   NEW(POSITION^.ATOME^.PNAME);
   POSITION^.ATOME^.PNAME^:=NOM;
-  POSITION^.ATOME^.VAL:= NIL;
+  (* est-il auto-évalué ? *)
+  if numberp(POSITION^.ATOME) then   (* oui si c'est un nombre... *)
+     POSITION^.ATOME^.VAL:=POSITION^.ATOME
+  else
+     POSITION^.ATOME^.VAL:= NIL;
   (* ON RACCROCHE DANS LA CHAINE *)
   OBPREC^.LIEN:=POSITION;
   POSITION^.LIEN:=OBSUIV;
@@ -136,7 +179,10 @@ BEGIN
     IF S^.SORTE=LISTE THEN
       FCAR:=S^.CAR
     ELSE
-      FCAR:=FERREUR('CAR',S);
+      if numberp(S) then
+        fcar:=S
+      else
+        FCAR:=FERREUR('CAR',S);
 END;
 
 FUNCTION FCDR(S:SGRAPHE):SGRAPHE; (* LE CDR *)
@@ -148,7 +194,10 @@ BEGIN
     IF S^.SORTE=LISTE THEN
       FCDR:=S^.CDR
     ELSE
-      FCDR:= FERREUR('CDR',S);
+      if numberp(S) then
+        fcdr:=NILE
+      else
+        FCDR:= FERREUR('CDR',S);
 END;
 
 FUNCTION FATOM(S:SGRAPHE) : SGRAPHE;
@@ -598,6 +647,7 @@ BEGIN
   ELSE BEGIN
     S:=FCAR(E);
     IF S^.SORTE=ATOME           THEN
+      if numberp(S)             then eval:= FCONS(S,EVLIS(FCDR(E))) else
       IF S^.PNAME^='QUOTE'      THEN EVAL:=FCAR(FCDR(E)) ELSE
       IF S^.PNAME^='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
       IF S^.PNAME^='TRACE'      THEN BEGIN
@@ -681,4 +731,3 @@ BEGIN
       WRITELN;
     UNTIL FINSESS OR ERREUR;
 END.
-
