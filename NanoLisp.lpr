@@ -128,7 +128,7 @@ BEGIN
   OBCOUR:=OBLIST;
   WHILE (OBCOUR<>NIL) DO
     BEGIN
-      IF OBCOUR^.ATOME^.SORTE=ATOME THEN
+      IF atomp(OBCOUR^.ATOME) THEN
         WRITE(OBCOUR^.ATOME^.PNAME^,SPC);
         OBCOUR:=OBCOUR^.LIEN;
     END;
@@ -217,7 +217,7 @@ FUNCTION FATOM(S:SGRAPHE) : SGRAPHE;
 (* REND TRU SI LE SGRAPHE EST UN ATOME *)
 
 BEGIN
-  IF S^.SORTE=ATOME THEN
+  IF atomp(S) THEN
     FATOM:=TRU
   ELSE
     FATOM:=NILE;
@@ -404,7 +404,7 @@ PROCEDURE PRINT(S:SGRAPHE);
           IF nullp(S) THEN
              PRINTATOM(NILE)
           ELSE
-              IF S^.SORTE=ATOME THEN
+              IF atomp(S) THEN
                  BEGIN
                  (* IMPRESSION DE L'ATOME SEUL *)
                     PRINTATOM(S);
@@ -617,7 +617,7 @@ BEGIN
 
 FUNCTION FSETQ(S:SGRAPHE): SGRAPHE;
 BEGIN
-  IF (S^.CAR^.SORTE=ATOME) AND (S^.CAR<>NILE) THEN
+  IF atomp(S^.CAR) AND not nullp(S^.CAR) THEN
     BEGIN
       S^.CAR^.VAL:=FCAR(EVLIS(FCDR(S)));
       FSETQ:=S^.CAR^.VAL;
@@ -719,7 +719,7 @@ BEGIN
       PRINT(E);
       (* WRITELN;*)
     END;
-  IF E^.SORTE=ATOME THEN
+  IF atomp(E) THEN
     IF (E^.VAL=NIL) OR nullp(E) THEN
       BEGIN
         EVAL :=FERREUR('EXPRESSION INDEFINIE' , E);
@@ -729,7 +729,7 @@ BEGIN
       EVAL:=E^.VAL
   ELSE BEGIN
     S:=FCAR(E);
-    IF S^.SORTE=ATOME           THEN
+    IF atomp(S)                THEN
       if numberp(S)             then eval:= FCONS(S,EVLIS(FCDR(E))) else
       IF S^.PNAME^='QUOTE'      THEN EVAL:=FCAR(FCDR(E)) ELSE
       IF S^.PNAME^='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
