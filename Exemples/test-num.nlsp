@@ -1,4 +1,4 @@
-(UNTRACE)
+(TRACE)
 1
 (1)
 (1 1)
@@ -17,5 +17,6 @@
 (DE CARRE(X)
   (* (CONS X (CONS X ()))))
 (CARRE 3)
+(DIV (CARRE 6) 2)
 (OBLIST)
 (QUIT)
