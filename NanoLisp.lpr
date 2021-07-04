@@ -18,6 +18,9 @@ CONST
   AG='{';
   AD='}';
   PLUS='+';
+  MOINS='-';
+  MULT='*';
+  DIVIS='DIV';
 
 TYPE
   SMALLSTRING=STRING (*[MAXCHAINE]*) ;
@@ -49,7 +52,7 @@ TYPE
   INTERACTIVE=TEXT;
 
 VAR (* ---- Globales ---- *)
-  NILE, TRU, AQUOTE, S, M, PSOURCE, ZERO:SGRAPHE;
+  NILE, TRU, AQUOTE, S, M, PSOURCE, ZERO, UN:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
@@ -635,7 +638,88 @@ BEGIN
   ELSE
     FNULL:=NILE
 END;
-
+function fopar(const op:string;s:sgraphe): sgraphe;
+var
+  iop1, iop2: integer;
+  resultat: string;
+  errCode1, errCode2: integer;
+  s1, s2: sgraphe;
+begin
+  if nullp(s) then (* on retourne l'element neutre de l'operation *)
+    begin
+      if (op=PLUS) or (op=MOINS) then
+        fopar:=zero
+      else
+        fopar:=un
+    end
+  else
+  begin
+    if atomp(s) then
+      begin
+        if numberp(s) then
+          val(s^.pname^, iop1, errCode1);
+          if errCode1=0 then
+            begin
+              (* Si le nombre existe, on le réutilise *)
+              s1:=FINDATOM(s^.pname^);
+              if not nullp(s1) then
+                fopar:=s1
+              else
+                (* Sinon on le crée *)
+                fopar:=nouvatom(oblist, s^.pname^)^.atome;
+            end
+        else
+        begin
+          fopar:=ferreur(op, s);
+        end;
+      end
+      else (* Reduction de la liste par l'operation *)
+      begin
+        s1:=fopar(op,fcar(s));
+        val(s1^.pname^,iop1,errCode1);
+        s2:=fopar(op,fcdr(s));
+        val(s2^.pname^,iop2,errCode2);
+        if (errCode1<>0) or (errCode2<>0) then
+          fopar:=ferreur(op,s)
+        else
+        begin
+           if (errCode1<>0) or (errCode2<>0) then
+              fopar:=ferreur(PLUS, s)
+           else
+           begin
+             case op of
+               PLUS:str(iop1 + iop2, resultat);
+               MOINS:str(iop1 - iop2, resultat);
+               MULT:str(iop1 * iop2, resultat);
+               DIVIS: str(iop1 div iop2, resultat);
+             end;
+             s1:=FINDATOM(resultat);
+             if not nullp(s1) then
+               fopar:=s1
+             else
+               fopar:=NOUVATOM(oblist, resultat)^.atome;
+           end
+        end;
+      end;
+  end;
+end;
+function fadd(s:sgraphe): sgraphe;
+begin
+  fadd:=fopar(PLUS,s);
+end;
+function fsub(s:sgraphe): sgraphe;
+begin
+  fsub:=fopar(MOINS,s);
+end;
+function fmult(s:sgraphe): sgraphe;
+begin
+  fmult:=fopar(MULT,s);
+end;
+function fdiv(s:sgraphe): sgraphe;
+begin
+  fdiv:=fopar(DIVIS,s);
+end;
+(*
 function fadd(s:sgraphe): sgraphe;
 var
   isomme1, isomme2: integer;
@@ -694,7 +778,7 @@ begin
         end;
       end;
   end;
-end;
+end;  *)
 (*********** LA FONCTION EVAL **********)
 FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
 (* L'EVALUATEUR :
@@ -742,6 +826,9 @@ BEGIN
                                       EVAL:=FINDATOM('UNTRACE') END ELSE
       IF S^.PNAME^='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
       IF S^.PNAME^=PLUS         THEN EVAL:=FADD(EVLIS(FCDR(E))) ELSE
+      IF S^.PNAME^=MOINS        THEN EVAL:=FSUB(EVLIS(FCDR(E))) ELSE
+      IF S^.PNAME^=MULT         THEN EVAL:=FMULT(EVLIS(FCDR(E))) ELSE
+      IF S^.PNAME^=DIVIS        THEN EVAL:=FDIV(EVLIS(FCDR(E))) ELSE
       IF S^.PNAME^='DE'         THEN EVAL:=FDE(FCDR(E))
       ELSE
         EVAL:=APPLY(S,EVLIS(FCDR(E)))
@@ -781,8 +868,8 @@ BEGIN
   OBCOUR:=NOUVATOM(OBCOUR, 'LOAD');
   OBCOUR:=NOUVATOM(OBCOUR, 'OBLIST');
   OBCOUR:=NOUVATOM(OBCOUR, 'QUIT');
-  OBCOUR:=NOUVATOM(OBCOUR, '0'); zero:=OBCOUR^.ATOME;
-  OBCOUR:=NOUVATOM(OBCOUR, PLUS);
+  OBCOUR:=NOUVATOM(OBCOUR, '0'); ZERO:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, '1'); UN:=OBCOUR^.ATOME;
 
   TRU^.VAL:=TRU;
   NILE^.VAL:=NILE;
