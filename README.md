@@ -41,7 +41,7 @@ mais pour être exploitables, ces opérateurs devraient tous avoir un résultat 
 FNULL ne respecte pas cette convention.
 
 ## Et ensuite ? 
-- Implémenter l'arithmétique entière.
+- Implémenter l'arithmétique entière. En cours.
 - Permettre des commentaires pour documenter le code. 
 - Permettre la lecture à la console.
 

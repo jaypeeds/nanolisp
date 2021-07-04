@@ -67,9 +67,16 @@ end;
 function numberp(s:sgraphe): boolean;
 begin
   numberp:=atomp(s) and
-           ((nil <> s^.pname) or (0 <>length(s^.pname^))) and
+           (nil <> s^.pname) and
+           (0 <>length(s^.pname^)) and
            isNumeric(s^.pname^);
 end;
+
+function quotep(s:sgraphe): boolean;
+begin
+  quotep:=(s = aquote);
+end;
+
 function nullp(s:sgraphe): boolean;
 begin
   nullp:=(s=NIL) or (s=NILE);
@@ -228,22 +235,25 @@ END;
 
 FUNCTION FCONS(S1,S2: SGRAPHE): SGRAPHE;
 (* LE CONS *)
-(* S2 doit être une liste ou l'atome NILE *)
+(* S2 doit être une liste ou NILE ou un nombre *)
 VAR
   NEWS: SGRAPHE;
   (* Scan Page 41 Col. 1 *)
 
 BEGIN
-  IF (S2^.SORTE=ATOME) AND NOT nullp(S2) THEN
+  if not (nullp(S2) or listp(s2) or numberp(s2)) then
     FCONS:=FERREUR('CONS', S2)
-  ELSE
-  BEGIN
-    NEW(NEWS);
-    NEWS^.SORTE:=LISTE;
-    NEWS^.CAR:=S1;
-    NEWS^.CDR:=S2;
-    FCONS:=NEWS;
-  END;
+  else (* NILE ou liste ou nombre *)
+    if numberp(s2) then
+      FCONS:=FCONS(S1, FCONS(FCAR(S2),NILE))
+    else
+      BEGIN
+        NEW(NEWS);
+        NEWS^.SORTE:=LISTE;
+        NEWS^.CAR:=S1;
+        NEWS^.CDR:=S2;
+        FCONS:=NEWS;
+      END;
 END;
 
 FUNCTION FDE (S: SGRAPHE): SGRAPHE;
@@ -401,7 +411,7 @@ PROCEDURE PRINT(S:SGRAPHE);
                     BLANCPRINT:=TRUE;
                  END ELSE
                  BEGIN
-                    IF FCAR(S)=AQUOTE THEN
+                    IF quotep(FCAR(S)) THEN
                     BEGIN
                       (* TRANSFORMATION INVERSE DE LA LECTURE :
                       ((QUOTE) (ATOME)) => '(ATOME)
@@ -410,7 +420,7 @@ PROCEDURE PRINT(S:SGRAPHE);
                       PRINT(FCAR(FCDR(S))); (* ON REPART COMME POUR UNE NOUVELLE LISTE *)
                     END ELSE
                     BEGIN
-                      IF (NOT nullp(S^.CAR)) AND listp(S^.CAR) AND (S^.CAR^.CAR <> AQUOTE) THEN
+                      IF (NOT nullp(S^.CAR)) AND listp(S^.CAR) AND not quotep(S^.CAR^.CAR) THEN
                          WRITE(SPC,PG); (* SUITE DE LISTE *)
 
                       PRINT1(FCAR(S)); (* IMPRESSION DU CAR *)
@@ -425,7 +435,7 @@ PROCEDURE PRINT(S:SGRAPHE);
   (* Corps de PRINT *)
    BEGIN
      BLANCPRINT:=FALSE;
-     IF listp(S) AND (S^.CAR <> AQUOTE) THEN
+     IF listp(S) AND not quotep(S^.CAR) THEN
         WRITE(SPC,PG);
      PRINT1(S);
    END;
@@ -482,7 +492,7 @@ BEGIN
       WRITELN;
   END;
 
-  IF (FILENAME^.SORTE=ATOME) AND (FILENAME^.PNAME<>NIL) THEN
+  IF  atomp(FILENAME) AND not nullp(FILENAME) THEN
     BEGIN
       (* Ajouté pour compatibilité Free Pascal *)
       (*L'EXTENSION .NLSP EST TOUJOURS AJOUTEE *)
@@ -535,10 +545,9 @@ BEGIN
       PRINT(ARGS);
       (* WRITELN;*)
     END;
-    (* TODO nullp(FN) ? *)
-    IF (FN=NILE) THEN
+    IF nullp(FN) THEN
       APPLY:=FERREUR('APPLY', FN)
-    ELSE IF (FN^.SORTE=ATOME) THEN
+    ELSE IF atomp(FN) THEN
       (* FONCTIONS PREDEFINIES *)
       IF FN^.PNAME^='CAR'       THEN APPLY:=FCAR(FCAR(ARGS)) ELSE
       IF FN^.PNAME^='CDR'       THEN APPLY:=FCDR(FCAR(ARGS)) ELSE
@@ -563,7 +572,7 @@ BEGIN
             ON OBTIENT SA DEFINITION PAR EVAL ET ON APPLIOUE *)
       APPLY:=APPLY(EVAL(FN),ARGS)
   ELSE
-    (*FN EST UNE LISTE*)
+    (* FN est une liste *)
     IF FCAR(FN)=FINDATOM('LAMBDA') THEN
       BEGIN
         (* Scan Page 43 Col. 1 *)
@@ -732,7 +741,7 @@ BEGIN
                                       (* Scan Page 43 Col. 2 *)
                                       EVAL:=FINDATOM('UNTRACE') END ELSE
       IF S^.PNAME^='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
-      IF S^.PNAME^=PLUS         THEN EVAL:=FADD(FCDR(E)) ELSE
+      IF S^.PNAME^=PLUS         THEN EVAL:=FADD(EVLIS(FCDR(E))) ELSE
       IF S^.PNAME^='DE'         THEN EVAL:=FDE(FCDR(E))
       ELSE
         EVAL:=APPLY(S,EVLIS(FCDR(E)))
