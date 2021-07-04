@@ -13,6 +13,7 @@
 (DE DOUBLE(X)
   (+ (CONS X (CONS X ()))))
 (DOUBLE 5)
+(- 7 5)
 (* 2 5)
 (DE CARRE(X)
   (* (CONS X (CONS X ()))))
