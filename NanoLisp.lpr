@@ -249,7 +249,7 @@ BEGIN
     FCONS:=FERREUR('CONS', S2)
   else (* NILE ou liste ou nombre *)
     if numberp(s2) then
-      FCONS:=FCONS(S1, FCONS(FCAR(S2),NILE))
+      FCONS:=FCONS(S1,FCONS(S2,NILE))
     else
       BEGIN
         NEW(NEWS);
@@ -388,7 +388,10 @@ PROCEDURE PRINT(S:SGRAPHE);
          BEGIN
            IF BLANCPRINT THEN WRITE(SPC);
            (* LE NOM DE L'ATOME *)
-           WRITE(S^.PNAME^);
+           if not nullp(S) then
+              WRITE(S^.PNAME^)
+           else
+              WRITE('NIL');
            BLANCPRINT:=FALSE;
          END;
        (* Corps de PRINT1 *)
@@ -556,7 +559,7 @@ BEGIN
                                         FINSESS:=TRUE;
                                      END ELSE
       IF FN^.PNAME^='LOAD'      THEN APPLY:=FLOAD(FCAR(ARGS)) ELSE
-            (* CE N'EST PAS NE FONCTION PREDEFINIE
+            (* CE N'EST PAS UNE FONCTION PREDEFINIE
             ON OBTIENT SA DEFINITION PAR EVAL ET ON APPLIOUE *)
       APPLY:=APPLY(EVAL(FN),ARGS)
   ELSE
@@ -726,7 +729,7 @@ BEGIN
       WRITELN;
       WRITE(TAB,'EVAL',GT);
       PRINT(E);
-      (* WRITELN;*)
+      WRITELN;
     END;
   IF atomp(E) THEN
     IF (E^.VAL=NIL) OR nullp(E) THEN
@@ -739,7 +742,7 @@ BEGIN
   ELSE BEGIN
     S:=FCAR(E);
     IF atomp(S)                THEN
-      if numberp(S)             then eval:= FCONS(S,EVLIS(FCDR(E))) else
+      if numberp(S)             then eval:=FCONS(S,EVLIS(FCDR(E))) else
       IF S^.PNAME^='QUOTE'      THEN EVAL:=FCAR(FCDR(E)) ELSE
       IF S^.PNAME^='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
       IF S^.PNAME^='TRACE'      THEN BEGIN
@@ -756,7 +759,10 @@ BEGIN
       IF S^.PNAME^=DIVIS        THEN EVAL:=FDIV(EVLIS(FCDR(E))) ELSE
       IF S^.PNAME^='DE'         THEN EVAL:=FDE(FCDR(E))
       ELSE
-        EVAL:=APPLY(S,EVLIS(FCDR(E)))
+          if numberp(fcar(FCDR(E))) then
+            eval:=FCONS(S^.VAL,EVLIS(FCDR(E)))
+          else
+            EVAL:=APPLY(S,EVLIS(FCDR(E)))
       END;
 END;
 
