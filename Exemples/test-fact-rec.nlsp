@@ -1,0 +1,5 @@
+(TRACE)
+(DE FACT(N) (COND ((EQ N 0) 1) (T (* N (FACT (- N 1))))))
+(FACT 5)
+(QUIT)
+

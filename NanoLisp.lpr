@@ -10,6 +10,7 @@ CONST
   CR=CHR(13);
   LF=CHR(10);
   FD='->';
+  GT='>';
   DOT='.';
   SPC=' ';
   PG='(';
@@ -115,7 +116,7 @@ end;
 FUNCTION FERREUR(MESSAGE:STRING; S:SGRAPHE) :SGRAPHE;
 (* IMPRIME LE MESSAGE D'ERREUR ET LA LISTE OU L'ATOME EN CAUSE *)
 BEGIN
-  WRITE('*** ERREUR : ', MESSAGE, FD);
+  WRITE('*** ERREUR : ', MESSAGE, SPC);
   PRINT(S);
   WRITELN('***');
   ERREUR:= TRUE;
@@ -456,13 +457,9 @@ BEGIN
   IF ERREUR THEN EXIT(*PAIRLIS*);
   IF TRACE THEN BEGIN
     WRITELN;
-    WRITE('PAIRLIS ', FD, PG);
-    (*IF NOT nullp(NOMS) THEN*)
-        PRINT(NOMS);
+    WRITE(TAB,'PAIRLIS ', GT); PRINT(NOMS);
     WRITE(DOT);
-    (*IF NOT nullp(VALS) THEN *)
-        PRINT(VALS);
-    WRITELN(PD);
+    PRINT(VALS); WRITELN;
   END;
   IF listp(NOMS) THEN
     BEGIN
@@ -490,7 +487,7 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-      WRITE('LOAD',FD);
+      WRITE(TAB,'LOADING',FD);
       PRINT(FILENAME);
       WRITELN;
   END;
@@ -542,11 +539,11 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-      WRITE('APPLY',FD);
+      WRITE(TAB,'APPLY',GT);
       PRINT(FN);
       WRITE(FD,SPC);
       PRINT(ARGS);
-      (* WRITELN;*)
+      WRITELN;
     END;
     IF nullp(FN) THEN
       APPLY:=FERREUR('APPLY', FN)
@@ -604,14 +601,14 @@ BEGIN
   IF NOT nullp(EVAL(FCAR(FCAR(L)))) THEN
     BEGIN
       IF TRACE THEN
-         WRITE(FD,'EVAL CAR', SPC);
+         WRITE(TAB,'COND IF THEN', SPC);
       EVCOND:=APPLISTE(FCDR(FCAR(L)));
       END
   ELSE
     IF NOT nullp(FCDR(L)) THEN
       BEGIN
         IF TRACE THEN
-           WRITE(FD,'EVAL CDR', SPC);
+           WRITE(TAB,'COND IF ELSE', SPC);
         EVCOND:=EVCOND(FCDR(L));
       END
     ELSE
@@ -638,7 +635,7 @@ BEGIN
   ELSE
     FNULL:=NILE
 END;
-function fopar(const op:string;s:sgraphe): sgraphe;
+function fopari(const op:string;s:sgraphe): sgraphe;
 var
   iop1, iop2: integer;
   resultat: string;
@@ -648,9 +645,9 @@ begin
   if nullp(s) then (* on retourne l'element neutre de l'operation *)
     begin
       if (op=PLUS) or (op=MOINS) then
-        fopar:=zero
+        fopari:=zero
       else
-        fopar:=un
+        fopari:=un
     end
   else
   begin
@@ -663,28 +660,28 @@ begin
               (* Si le nombre existe, on le réutilise *)
               s1:=FINDATOM(s^.pname^);
               if not nullp(s1) then
-                fopar:=s1
+                fopari:=s1
               else
                 (* Sinon on le crée *)
-                fopar:=nouvatom(oblist, s^.pname^)^.atome;
+                fopari:=nouvatom(oblist, s^.pname^)^.atome;
             end
         else
         begin
-          fopar:=ferreur(op, s);
+          fopari:=ferreur(op, s);
         end;
       end
       else (* Reduction de la liste par l'operation *)
       begin
-        s1:=fopar(op,fcar(s));
+        s1:=fopari(op,fcar(s));
         val(s1^.pname^,iop1,errCode1);
-        s2:=fopar(op,fcdr(s));
+        s2:=fopari(op,fcdr(s));
         val(s2^.pname^,iop2,errCode2);
         if (errCode1<>0) or (errCode2<>0) then
-          fopar:=ferreur(op,s)
+          fopari:=ferreur(op,s)
         else
         begin
            if (errCode1<>0) or (errCode2<>0) then
-              fopar:=ferreur(PLUS, s)
+              fopari:=ferreur(PLUS, s)
            else
            begin
              case op of
@@ -695,9 +692,9 @@ begin
              end;
              s1:=FINDATOM(resultat);
              if not nullp(s1) then
-               fopar:=s1
+               fopari:=s1
              else
-               fopar:=NOUVATOM(oblist, resultat)^.atome;
+               fopari:=NOUVATOM(oblist, resultat)^.atome;
            end
         end;
       end;
@@ -705,80 +702,20 @@ begin
 end;
 function fadd(s:sgraphe): sgraphe;
 begin
-  fadd:=fopar(PLUS,s);
+  fadd:=fopari(PLUS,s);
 end;
 function fsub(s:sgraphe): sgraphe;
 begin
-  fsub:=fopar(MOINS,s);
+  fsub:=fopari(MOINS,s);
 end;
 function fmult(s:sgraphe): sgraphe;
 begin
-  fmult:=fopar(MULT,s);
+  fmult:=fopari(MULT,s);
 end;
 function fdiv(s:sgraphe): sgraphe;
 begin
-  fdiv:=fopar(DIVIS,s);
+  fdiv:=fopari(DIVIS,s);
 end;
-(*
-function fadd(s:sgraphe): sgraphe;
-var
-  isomme1, isomme2: integer;
-  somme: string;
-  errCode1, errCode2: integer;
-  s1, s2: sgraphe;
-begin
-  if nullp(s) then
-    fadd:=zero
-  else
-  begin
-    if atomp(s) then
-      begin
-        if numberp(s) then
-          val(s^.pname^, isomme1, errCode1);
-          if errCode1=0 then
-            begin
-              (* Si le nombre existe, on le réutilise *)
-              s1:=FINDATOM(s^.pname^);
-              if not nullp(s1) then
-                fadd:=s1
-              else
-                (* Sinon on le crée *)
-                fadd:=nouvatom(oblist, s^.pname^)^.atome;
-            end
-        else
-        begin
-          fadd:=ferreur('+', s);
-        end;
-      end
-      else (* Reduction de la liste par l'addition *)
-      begin
-        s1:=fadd(fcar(s));
-        val(s1^.pname^,isomme1,errCode1);
-        s2:=fadd(fcdr(s));
-        val(s2^.pname^,isomme2,errCode2);
-        if (errCode1<>0) or (errCode2<>0) then
-          fadd:=ferreur(PLUS,s)
-        else
-        begin
-           s1:=fadd(fcar(s));
-           val(s1^.PNAME^, isomme1, errCode1);
-           s2:=fadd(fcdr(s));
-           val(s2^.PNAME^, isomme2, errCode2);
-           if (errCode1<>0) or (errCode2<>0) then
-              fadd:=ferreur(PLUS, s)
-           else
-           begin
-              str(isomme1 + isomme2, somme);
-              s1:=FINDATOM(somme);
-              if not nullp(s1) then
-                fadd:=s1
-              else
-                fadd:=nouvatom(oblist, somme)^.atome;
-           end
-        end;
-      end;
-  end;
-end;  *)
 (*********** LA FONCTION EVAL **********)
 FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
 (* L'EVALUATEUR :
@@ -799,7 +736,7 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-      WRITE('EVAL',FD);
+      WRITE('EVAL',GT);
       PRINT(E);
       (* WRITELN;*)
     END;
