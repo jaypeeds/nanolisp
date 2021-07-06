@@ -7,11 +7,8 @@ CONST
   GUIL='"';
   BAR='|';
   FD='->';
-<<<<<<< HEAD
-=======
   PROMPT1='?';
   PROMPT2='#';
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
   GT='>';
   DOT='.';
   SPC=' ';
@@ -123,11 +120,7 @@ end;
 FUNCTION FERREUR(MESSAGE:STRING; S:SGRAPHE) :SGRAPHE;
 (* IMPRIME LE MESSAGE D'ERREUR ET LA LISTE OU L'ATOME EN CAUSE *)
 BEGIN
-<<<<<<< HEAD
   WRITE('*** ERREUR : ', MESSAGE, SPC);
-=======
-  WRITE('*** ERREUR : ', MESSAGE, SPC, FD);
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
   PRINT(S);
   WRITE('***');
   WRITELN;
@@ -466,17 +459,9 @@ BEGIN
   IF ERREUR THEN EXIT(*PAIRLIS*);
   IF TRACE THEN BEGIN
     WRITELN;
-<<<<<<< HEAD
     WRITE(TAB,'PAIRLIS ', GT); PRINT(NOMS);
     WRITE(DOT);
     PRINT(VALS); WRITELN;
-=======
-    WRITE(TAB,'PAIRLIS',DEUXP);
-    PRINT(NOMS);
-    WRITE(DOT);
-    PRINT(VALS);
-    WRITELN;
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
   END;
   IF listp(NOMS) THEN
     BEGIN
@@ -498,11 +483,7 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-<<<<<<< HEAD
       WRITE(TAB,'LOADING',FD);
-=======
-      WRITE(TAB,'LOADING',SPC);
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
       PRINT(FILENAME);
       WRITELN;
   END;
@@ -552,15 +533,9 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-<<<<<<< HEAD
       WRITE(TAB,'APPLY',GT);
       PRINT(FN);
       WRITE(FD);
-=======
-      WRITE(TAB,'APPLY',DEUXP);
-      PRINT(FN);
-      WRITE(SPC,FD,SPC);
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
       PRINT(ARGS);
       WRITELN;
     END;
@@ -620,22 +595,14 @@ BEGIN
   IF NOT nullp(EVAL(FCAR(FCAR(L)))) THEN
     BEGIN
       IF TRACE THEN
-<<<<<<< HEAD
          WRITE(TAB,'COND IF THEN', SPC);
-=======
-         WRITE(FD,'COND CAR', DEUXP);
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
       EVCOND:=APPLISTE(FCDR(FCAR(L)));
       END
   ELSE
     IF NOT nullp(FCDR(L)) THEN
       BEGIN
         IF TRACE THEN
-<<<<<<< HEAD
            WRITE(TAB,'COND IF ELSE', SPC);
-=======
-           WRITE(FD,'COND CDR', DEUXP);
->>>>>>> 96b2579... Test de la factorielle avec tail reduction
         EVCOND:=EVCOND(FCDR(L));
       END
     ELSE
@@ -795,11 +762,8 @@ BEGIN
       IF S^.PNAME^=DIVIS        THEN EVAL:=FDIV(EVLIS(FCDR(E))) ELSE
       IF S^.PNAME^='DE'         THEN EVAL:=FDE(FCDR(E))
       ELSE
-          if numberp(fcar(FCDR(E))) then
-            eval:=FCONS(S^.VAL,EVLIS(FCDR(E)))
-          else
             EVAL:=APPLY(S,EVLIS(FCDR(E)))
-      END;
+  END;
 END;
 
 (******* INITIALISATION ******)
