@@ -6,10 +6,12 @@ CONST
   QT='''';
   GUIL='"';
   BAR='|';
-  TAB=CHR(9);   (* Séparateurs non-imprimables *)
-  CR=CHR(13);
-  LF=CHR(10);
   FD='->';
+<<<<<<< HEAD
+=======
+  PROMPT1='?';
+  PROMPT2='#';
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
   GT='>';
   DOT='.';
   SPC=' ';
@@ -21,7 +23,12 @@ CONST
   PLUS='+';
   MOINS='-';
   MULT='*';
-  DIVIS='DIV';
+  DIVIS='/';
+  DEUXP=':';
+  TAB=CHR(9);   (* Séparateurs non-imprimables *)
+  CR=CHR(13);
+  LF=CHR(10);
+
 
 TYPE
   SMALLSTRING=STRING (*[MAXCHAINE]*) ;
@@ -116,9 +123,14 @@ end;
 FUNCTION FERREUR(MESSAGE:STRING; S:SGRAPHE) :SGRAPHE;
 (* IMPRIME LE MESSAGE D'ERREUR ET LA LISTE OU L'ATOME EN CAUSE *)
 BEGIN
+<<<<<<< HEAD
   WRITE('*** ERREUR : ', MESSAGE, SPC);
+=======
+  WRITE('*** ERREUR : ', MESSAGE, SPC, FD);
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
   PRINT(S);
-  WRITELN('***');
+  WRITE('***');
+  WRITELN;
   ERREUR:= TRUE;
   FERREUR:= NILE;
 END;
@@ -290,10 +302,10 @@ VAR
   BEGIN
     (* TOUT CE QUI A ETE LU PRECEDMMENT A ETE TRAITE*)
     (* 1 = ON AVALE LES BLANCS *)
-    WHILE (NOT EOF(INFILE)) AND (TAMPON in [SPC, TAB, CR, LF]) DO READ(INFILE, TAMPON);
+    WHILE (NOT EOF(INFILE)) AND (TAMPON in [SPC, TAB, LF]) DO READ(INFILE, TAMPON);
     (* 2 = ON LIT JUSQU'AU PREMIER SEPARATEUR *)
     WHILE NOT (EOF(INFILE)
-      OR (TAMPON IN [PG, PD, SPC, TAB, CR, LF, QT])
+      OR (TAMPON IN [PG, PD, QT, SPC, TAB, LF])
       OR (LENGTH(LUCHAINE) >= MAXCHAINE)) DO
       BEGIN INTER[1]:= TAMPON;
         LUCHAINE:=CONCAT(LUCHAINE, INTER);
@@ -416,12 +428,12 @@ PROCEDURE PRINT(S:SGRAPHE);
                     END ELSE
                     BEGIN
                       IF (NOT nullp(S^.CAR)) AND listp(S^.CAR) AND not quotep(S^.CAR^.CAR) THEN
-                         WRITE(SPC,PG); (* SUITE DE LISTE *)
+                         WRITE(PG); (* SUITE DE LISTE *)
 
                       PRINT1(FCAR(S)); (* IMPRESSION DU CAR *)
 
                       IF nullp(FCDR(S)) THEN
-                         WRITE(PD,SPC) (* FIN DE LISTE *)
+                         WRITE(PD) (* FIN DE LISTE *)
                       ELSE
                          PRINT1(FCDR(S)); (* IMPRESSION DU CDR *)
                     END; (* NOT QUOTE *)
@@ -431,42 +443,50 @@ PROCEDURE PRINT(S:SGRAPHE);
    BEGIN
      BLANCPRINT:=FALSE;
      IF listp(S) AND not quotep(S^.CAR) THEN
-        WRITE(SPC,PG);
+        WRITE(PG);
      PRINT1(S);
    END;
 
 PROCEDURE PAIRLIS(VAR NOMS, VALS: SGRAPHE);
 (* LES VALEURS PASSEES SONT MOMENTANEMENT ASSOCIEES AUX NOMS
   CEUX-CI RETROUVERONT LEURS ANCIENNES VALEURS PAR
-  L'OPERATION INVERGE.
-  PATRLIS N'EST APPELEE QUE LORS DE L'EXECUTION DE LAMDDA
+  L'OPERATION INVERSE.
+  PAIRLIS N'EST APPELEE QUE LORS DE L'EXECUTION DE LAMBDA
 *)
-VAR
-  SAVE: SGRAPHE;
+  procedure swap(VAR S1,S2:sgraphe);
+  var
+    save: sgraphe;
+  begin
+    save:=S1;
+    S1:=S2;
+    S2:=save;
+  end;
 
 BEGIN
   IF ERREUR THEN EXIT(*PAIRLIS*);
   IF TRACE THEN BEGIN
     WRITELN;
+<<<<<<< HEAD
     WRITE(TAB,'PAIRLIS ', GT); PRINT(NOMS);
     WRITE(DOT);
     PRINT(VALS); WRITELN;
+=======
+    WRITE(TAB,'PAIRLIS',DEUXP);
+    PRINT(NOMS);
+    WRITE(DOT);
+    PRINT(VALS);
+    WRITELN;
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
   END;
   IF listp(NOMS) THEN
     BEGIN
-      (* Va au fond de la liste d'abord puis revient vers la tête *)
       PAIRLIS(NOMS^.CDR,VALS^.CDR);
-      SAVE:=NOMS^.CAR^.VAL;
-      NOMS^.CAR^.VAL:=FCAR(VALS);
-      VALS^.CAR:=SAVE;
-    END ELSE
-      IF NOT nullp(NOMS) THEN
-        BEGIN
-          SAVE:=NOMS^.VAL;
-          NOMS^.VAL:=VALS;
-          (* Scan Page 42 Col. 2 *)
-          VALS:=SAVE;
-        END;
+      swap(NOMS^.CAR^.VAL,VALS^.CAR);
+    END
+  ELSE
+    IF NOT nullp(NOMS) THEN
+       swap(NOMS^.VAL, vals);
+       (* Scan Page 42 Col. 2 *)
 END;
 
 FUNCTION EVAL(E:SGRAPHE):SGRAPHE;FORWARD;
@@ -478,7 +498,11 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
+<<<<<<< HEAD
       WRITE(TAB,'LOADING',FD);
+=======
+      WRITE(TAB,'LOADING',SPC);
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
       PRINT(FILENAME);
       WRITELN;
   END;
@@ -492,7 +516,7 @@ BEGIN
       WHILE NOT EOF (INFILE) DO
         BEGIN
           WRITELN;
-          WRITE('=',SPC);
+          WRITE(PROMPT1,SPC);
           PRINT(EVAL(FREAD(INFILE)));
         END;
         CLOSE(INFILE);
@@ -518,8 +542,6 @@ END;
 
 FUNCTION APPLY(FN,ARGS:SGRAPHE):SGRAPHE;
 (* EXECUTE UNE FONCTION AVEC LES ARGUMENTS PASSES *)
-(*VAR
-  SAVE:SGRAPHE;*)
 
 BEGIN
   IF ERREUR THEN
@@ -530,9 +552,15 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
+<<<<<<< HEAD
       WRITE(TAB,'APPLY',GT);
       PRINT(FN);
       WRITE(FD);
+=======
+      WRITE(TAB,'APPLY',DEUXP);
+      PRINT(FN);
+      WRITE(SPC,FD,SPC);
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
       PRINT(ARGS);
       WRITELN;
     END;
@@ -555,7 +583,7 @@ BEGIN
                                         OBPRINT;
                                      END ELSE
       IF FN^.PNAME^='QUIT'      THEN BEGIN
-                                        APPLY:=NILE;
+                                        APPLY:=FINDATOM('QUIT');
                                         FINSESS:=TRUE;
                                      END ELSE
       IF FN^.PNAME^='LOAD'      THEN APPLY:=FLOAD(FCAR(ARGS)) ELSE
@@ -569,7 +597,7 @@ BEGIN
         (* Scan Page 43 Col. 1 *)
         PAIRLIS(FN^.CDR^.CAR,ARGS); (* ON DONNE LEUR VALEUR AUX PARAMETRES *)
         APPLY:=APPLISTE(FCDR(FCDR(FN)));
-        PAIRLIS(FN^.CDR^.CAR, ARGS);(* ON RESTAURE LEURS ANCIENNES VALEURS *)
+        PAIRLIS(FN^.CDR^.CAR,ARGS);(* ON RESTAURE LEURS ANCIENNES VALEURS *)
       END
     ELSE
         APPLY:=FERREUR('APPLY', FN);
@@ -592,14 +620,22 @@ BEGIN
   IF NOT nullp(EVAL(FCAR(FCAR(L)))) THEN
     BEGIN
       IF TRACE THEN
+<<<<<<< HEAD
          WRITE(TAB,'COND IF THEN', SPC);
+=======
+         WRITE(FD,'COND CAR', DEUXP);
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
       EVCOND:=APPLISTE(FCDR(FCAR(L)));
       END
   ELSE
     IF NOT nullp(FCDR(L)) THEN
       BEGIN
         IF TRACE THEN
+<<<<<<< HEAD
            WRITE(TAB,'COND IF ELSE', SPC);
+=======
+           WRITE(FD,'COND CDR', DEUXP);
+>>>>>>> 96b2579... Test de la factorielle avec tail reduction
         EVCOND:=EVCOND(FCDR(L));
       END
     ELSE
@@ -710,11 +746,11 @@ end;
 (*********** LA FONCTION EVAL **********)
 FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
 (* L'EVALUATEUR :
-  SI LE PARAMETRE EST UN ATOME - ) REND SA VALEUR SINON
+  SI LE PARAMETRE EST UN ATOME -> REND SA VALEUR SINON
   SI LE CAR EST UN ATOME
   SI C'EST UNE "FONCTION SPECIALE"
     (PARAMETRES NON EVALUES) -> EXECUTION
-  SINON -) APPELLE APPLY POUR SON EXECUTION AVEC LA LISTE
+  SINON -> APPELLE APPLY POUR SON EXECUTION AVEC LA LISTE
     EVALUEE DES ARGUMENTS *)
 VAR S:SGRAPHE;
 
@@ -813,7 +849,6 @@ END;(*INIT*)
 BEGIN
     FINSESS:=FALSE;
     INIT;
-    (* PAGE(OUTPUT); *)
     WRITELN('****************************');
     WRITELN('         NANO-LISP');
     WRITELN;
@@ -822,14 +857,14 @@ BEGIN
     WRITE('Source: '); PRINT(PSOURCE);WRITELN('.NLSP');
 
     REPEAT
-      WRITE('? ');
+      WRITE(PROMPT1,SPC);
       M:=FLOAD(PSOURCE);
       WRITELN;
       ERREUR :=FALSE;
       S:=EVAL(M);
       IF NOT (FINSESS OR ERREUR) THEN
       BEGIN
-        WRITELN; WRITE('# ');
+        WRITELN(PROMPT2,SPC);
         PRINT(S);
       END;
       WRITELN;
