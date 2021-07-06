@@ -57,7 +57,7 @@ TYPE
   INTERACTIVE=TEXT;
 
 VAR (* ---- Globales ---- *)
-  NILE, TRU, AQUOTE, S, M, PSOURCE, ZERO, UN:SGRAPHE;
+  NILE, TRU, AQUOTE, LAMBDA, S, M, PSOURCE, ZERO, UN:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
@@ -283,7 +283,7 @@ END;
 FUNCTION FDE (S: SGRAPHE): SGRAPHE;
   (* DONNE UN NOM A UNE FONCTION *)
   BEGIN
-    S^.CAR^.VAL:=FCONS(FINDATOM('LAMBDA'),FCDR(S));
+    S^.CAR^.VAL:=FCONS(LAMBDA,FCDR(S));
     FDE:=FCAR(S);
   END;
 function fopari(const op:string;s:sgraphe): sgraphe;
@@ -666,14 +666,17 @@ BEGIN
       APPLY:=APPLY(EVAL(FN),ARGS)
   ELSE
     (* FN est une liste *)
-    IF FCAR(FN)=FINDATOM('LAMBDA') THEN
+    IF FCAR(FN)=LAMBDA THEN
       BEGIN
         (* Scan Page 43 Col. 1 *)
         PAIRLIS(FN^.CDR^.CAR,ARGS); (* ON DONNE LEUR VALEUR AUX PARAMETRES *)
         APPLY:=APPLISTE(FCDR(FCDR(FN)));
         PAIRLIS(FN^.CDR^.CAR,ARGS);(* ON RESTAURE LEURS ANCIENNES VALEURS *)
-      END
-    ELSE
+      END ELSE
+    IF FCAR(FN)=AQUOTE THEN
+    BEGIN
+      APPLY:=FCONS(FN, ARGS);
+    END ELSE
         APPLY:=FERREUR('APPLY', FN);
 END; (*APPLY*)
 
@@ -766,7 +769,7 @@ BEGIN
     IF atomp(S)                THEN
       if variablep(s) or
          numberp(s)             then EVAL:=FCONS(EVAL(S),EVLIS(FCDR(E))) else
-      IF nameOf(S)='QUOTE'      THEN EVAL:=FCAR(FCDR(E)) ELSE
+      IF nameOf(S)='QUOTE'      THEN EVAL:=E ELSE
       IF nameOf(S)='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
       IF nameOf(S)='TRACE'      THEN BEGIN
                                       TRACE:=TRUE;
@@ -804,7 +807,7 @@ BEGIN
   OBCOUR:=NOUVATOM(OBCOUR, 'CONS');
   OBCOUR:=NOUVATOM(OBCOUR, 'ATOM');
   OBCOUR:=NOUVATOM(OBCOUR, 'EQ');
-  OBCOUR:=NOUVATOM(OBCOUR, 'LAMBDA');
+  OBCOUR:=NOUVATOM(OBCOUR, 'LAMBDA'); LAMBDA:=OBCOUR^.ATOME;
   OBCOUR:=NOUVATOM(OBCOUR, 'READ');
   OBCOUR:=NOUVATOM(OBCOUR, 'PRINT');
   OBCOUR:=NOUVATOM(OBCOUR, 'COND');
