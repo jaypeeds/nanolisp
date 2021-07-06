@@ -1,0 +1,7 @@
+(TRACE)
+(SETQ N 5)
+(SETQ ACC 1)
+(-(N 1))
+(*(N ACC))
+(CONS (-(N 1)) (*(N ACC)))
+(QUIT)

@@ -64,35 +64,40 @@ VAR (* ---- Globales ---- *)
 PROCEDURE PRINT(S:SGRAPHE); FORWARD;
 function isNumeric(const potentialNumeric: string): boolean; forward;
 (********** PREDICATS ******************)
-function atomp(s:sgraphe): boolean;
-begin
-  atomp:=(s^.sorte=ATOME);
-end;
-function listp(s:sgraphe): boolean;
-begin
-  listp:=(s^.sorte=LISTE);
-end;
-function numberp(s:sgraphe): boolean;
-begin
-  numberp:=atomp(s) and
-           (nil <> s^.pname) and
-           (0 <>length(s^.pname^)) and
-           isNumeric(s^.pname^);
-end;
-
-function quotep(s:sgraphe): boolean;
-begin
-  quotep:=(s = aquote);
-end;
-
 function nullp(s:sgraphe): boolean;
 begin
   nullp:=(s=NIL) or (s=NILE);
 end;
-
+function atomp(s:sgraphe): boolean;
+begin
+  atomp:=((not nullp(s)) and (s^.sorte=ATOME));
+end;
+function listp(s:sgraphe): boolean;
+begin
+  listp:=((not nullp(s)) and (s^.sorte=LISTE));
+end;
+function numberp(s:sgraphe): boolean;
+begin
+  numberp:=((not nullp(s)) and
+            atomp(s) and
+           (nil <> s^.pname) and
+           (0 <>length(s^.pname^)) and
+           isNumeric(s^.pname^));
+end;
+function quotep(s:sgraphe): boolean;
+begin
+  quotep:=((not nullp(s)) and (s = aquote));
+end;
 function autoevaluatedp(s:sgraphe): boolean;
 begin
-  autoEvaluatedp := (s=(s^.val)) and not nullp(s);
+  autoEvaluatedp :=(not nullp(s) and (s=(s^.val)));
+end;
+function variablep(s:sgraphe): boolean;
+begin
+  variablep:=(not nullp(s)) and
+       atomp(s) and
+       (not numberp(s)) and
+       autoevaluatedp(s^.val);
 end;
 
 (***** FONCTIONS UTILITAIRES ******)
@@ -115,6 +120,16 @@ begin
 
    isNumeric :=((integerError = 0) or (realError = 0));
 end;
+function nameOf(S:sgraphe): SMALLSTRING;
+begin
+   nameOf:=S^.PNAME^;
+end;
+function valueOf(S:sgraphe): SGRAPHE;
+begin
+   (* iUtilisable seulement à droite du := *)
+   valueOf:=S^.VAL;
+end;
+
 (***** FONCTIONS UTILITAIRES ******)
 
 FUNCTION FERREUR(MESSAGE:STRING; S:SGRAPHE) :SGRAPHE;
@@ -271,7 +286,87 @@ FUNCTION FDE (S: SGRAPHE): SGRAPHE;
     S^.CAR^.VAL:=FCONS(FINDATOM('LAMBDA'),FCDR(S));
     FDE:=FCAR(S);
   END;
-
+function fopari(const op:string;s:sgraphe): sgraphe;
+var
+  iop1, iop2: integer;
+  resultat: string;
+  errCode1, errCode2: integer;
+  s1, s2: sgraphe;
+begin
+  if nullp(s) then (* on retourne l'element neutre de l'operation *)
+    begin
+      if (op=PLUS) or (op=MOINS) then
+        fopari:=zero
+      else
+        fopari:=un
+    end
+  else
+  begin
+    if atomp(s) then
+      begin
+        if numberp(s) then
+          val(nameOf(s), iop1, errCode1);
+          if errCode1=0 then
+            begin
+              (* Si le nombre existe, on le réutilise *)
+              s1:=FINDATOM(s^.pname^);
+              if not nullp(s1) then
+                fopari:=s1
+              else
+                (* Sinon on le crée *)
+                fopari:=nouvatom(oblist, s^.pname^)^.atome;
+            end
+        else
+        begin
+          fopari:=ferreur(op, s);
+        end;
+      end
+      else (* Reduction de la liste par l'operation *)
+      begin
+        s1:=fopari(op,fcar(s));
+        val(nameOf(s1),iop1,errCode1);
+        s2:=fopari(op,fcdr(s));
+        val(nameOf(s2),iop2,errCode2);
+        if (errCode1<>0) or (errCode2<>0) then
+          fopari:=ferreur(op,s)
+        else
+        begin
+           if (errCode1<>0) or (errCode2<>0) then
+              fopari:=ferreur(PLUS, s)
+           else
+           begin
+             case op of
+               PLUS:str(iop1 + iop2, resultat);
+               MOINS:str(iop1 - iop2, resultat);
+               MULT:str(iop1 * iop2, resultat);
+               DIVIS: str(iop1 div iop2, resultat);
+             end;
+             s1:=FINDATOM(resultat);
+             if not nullp(s1) then
+               fopari:=s1
+             else
+               fopari:=NOUVATOM(oblist, resultat)^.atome;
+           end
+        end;
+      end;
+  end;
+end;
+function fadd(s:sgraphe): sgraphe;
+begin
+  fadd:=fopari(PLUS,s);
+end;
+function fsub(s:sgraphe): sgraphe;
+begin
+  fsub:=fopari(MOINS,s);
+end;
+function fmult(s:sgraphe): sgraphe;
+begin
+  fmult:=fopari(MULT,s);
+end;
+function fdiv(s:sgraphe): sgraphe;
+begin
+  fdiv:=fopari(DIVIS,s);
+end;
 (*********** PROCEDURES D'ENTREE-SORTIES *****)
 FUNCTION FREAD(VAR INFILE: INTERACTIVE): SGRAPHE;
 (* LE NOM READ EST DEJA RESERVE PAR PASCAL *)
@@ -394,7 +489,7 @@ PROCEDURE PRINT(S:SGRAPHE);
            IF BLANCPRINT THEN WRITE(SPC);
            (* LE NOM DE L'ATOME *)
            if not nullp(S) then
-              WRITE(S^.PNAME^)
+              WRITE(nameOf(S))
            else
               WRITE('NIL');
            BLANCPRINT:=FALSE;
@@ -543,25 +638,29 @@ BEGIN
       APPLY:=FERREUR('APPLY', FN)
     ELSE IF atomp(FN) THEN
       (* FONCTIONS PREDEFINIES *)
-      IF FN^.PNAME^='CAR'       THEN APPLY:=FCAR(FCAR(ARGS)) ELSE
-      IF FN^.PNAME^='CDR'       THEN APPLY:=FCDR(FCAR(ARGS)) ELSE
-      IF FN^.PNAME^='CONS'      THEN APPLY:=FCONS(FCAR(ARGS), FCAR(FCDR(ARGS))) ELSE
-      IF FN^.PNAME^='ATOM'      THEN APPLY:=FATOM(FCAR(ARGS)) ELSE
-      IF FN^.PNAME^='EQ'        THEN APPLY:=FEQ(FCAR(ARGS),FCAR(FCDR(ARGS))) ELSE
-      (* IF FN^.PNAME^='READ'      THEN APPLY:=FREAD(INPUT) ELSE *)
-      IF FN^.PNAME^='PRINT'     THEN BEGIN
+      IF nameOf(FN)='CAR'       THEN APPLY:=FCAR(FCAR(ARGS)) ELSE
+      IF nameOf(FN)='CDR'       THEN APPLY:=FCDR(FCAR(ARGS)) ELSE
+      IF nameOf(FN)='CONS'      THEN APPLY:=FCONS(FCAR(ARGS), FCAR(FCDR(ARGS))) ELSE
+      IF nameOf(FN)='ATOM'      THEN APPLY:=FATOM(FCAR(ARGS)) ELSE
+      IF nameOf(FN)='EQ'        THEN APPLY:=FEQ(FCAR(ARGS),FCAR(FCDR(ARGS))) ELSE
+      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(FCAR(ARGS))) ELSE
+      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(FCAR(ARGS))) ELSE
+      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(FCAR(ARGS))) ELSE
+      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(FCAR(ARGS))) ELSE
+      (* IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE *)
+      IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
                                         APPLY:=FCAR(ARGS);
                                      END ELSE
-      IF FN^.PNAME^='OBLIST'    THEN BEGIN
+      IF nameOf(FN)='OBLIST'    THEN BEGIN
                                         APPLY:=NILE;
                                         OBPRINT;
                                      END ELSE
-      IF FN^.PNAME^='QUIT'      THEN BEGIN
-                                        APPLY:=FINDATOM('QUIT');
+      IF nameOf(FN)='QUIT'      THEN BEGIN
+                                        APPLY:=NILE;
                                         FINSESS:=TRUE;
                                      END ELSE
-      IF FN^.PNAME^='LOAD'      THEN APPLY:=FLOAD(FCAR(ARGS)) ELSE
+      IF nameOf(FN)='LOAD'      THEN APPLY:=FLOAD(FCAR(ARGS)) ELSE
             (* CE N'EST PAS UNE FONCTION PREDEFINIE
             ON OBTIENT SA DEFINITION PAR EVAL ET ON APPLIOUE *)
       APPLY:=APPLY(EVAL(FN),ARGS)
@@ -629,87 +728,7 @@ BEGIN
   ELSE
     FNULL:=NILE
 END;
-function fopari(const op:string;s:sgraphe): sgraphe;
-var
-  iop1, iop2: integer;
-  resultat: string;
-  errCode1, errCode2: integer;
-  s1, s2: sgraphe;
-begin
-  if nullp(s) then (* on retourne l'element neutre de l'operation *)
-    begin
-      if (op=PLUS) or (op=MOINS) then
-        fopari:=zero
-      else
-        fopari:=un
-    end
-  else
-  begin
-    if atomp(s) then
-      begin
-        if numberp(s) then
-          val(s^.pname^, iop1, errCode1);
-          if errCode1=0 then
-            begin
-              (* Si le nombre existe, on le réutilise *)
-              s1:=FINDATOM(s^.pname^);
-              if not nullp(s1) then
-                fopari:=s1
-              else
-                (* Sinon on le crée *)
-                fopari:=nouvatom(oblist, s^.pname^)^.atome;
-            end
-        else
-        begin
-          fopari:=ferreur(op, s);
-        end;
-      end
-      else (* Reduction de la liste par l'operation *)
-      begin
-        s1:=fopari(op,fcar(s));
-        val(s1^.pname^,iop1,errCode1);
-        s2:=fopari(op,fcdr(s));
-        val(s2^.pname^,iop2,errCode2);
-        if (errCode1<>0) or (errCode2<>0) then
-          fopari:=ferreur(op,s)
-        else
-        begin
-           if (errCode1<>0) or (errCode2<>0) then
-              fopari:=ferreur(PLUS, s)
-           else
-           begin
-             case op of
-               PLUS:str(iop1 + iop2, resultat);
-               MOINS:str(iop1 - iop2, resultat);
-               MULT:str(iop1 * iop2, resultat);
-               DIVIS: str(iop1 div iop2, resultat);
-             end;
-             s1:=FINDATOM(resultat);
-             if not nullp(s1) then
-               fopari:=s1
-             else
-               fopari:=NOUVATOM(oblist, resultat)^.atome;
-           end
-        end;
-      end;
-  end;
-end;
-function fadd(s:sgraphe): sgraphe;
-begin
-  fadd:=fopari(PLUS,s);
-end;
-function fsub(s:sgraphe): sgraphe;
-begin
-  fsub:=fopari(MOINS,s);
-end;
-function fmult(s:sgraphe): sgraphe;
-begin
-  fmult:=fopari(MULT,s);
-end;
-function fdiv(s:sgraphe): sgraphe;
-begin
-  fdiv:=fopari(DIVIS,s);
-end;
+
 (*********** LA FONCTION EVAL **********)
 FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
 (* L'EVALUATEUR :
@@ -735,34 +754,30 @@ BEGIN
       WRITELN;
     END;
   IF atomp(E) THEN
-    IF (E^.VAL=NIL) OR nullp(E) THEN
+    IF nullp(E) or nullp(valueOf(E))THEN
       BEGIN
         EVAL :=FERREUR('EXPRESSION INDEFINIE' , E);
         EXIT(*EVAL*);
       END
     ELSE
-      EVAL:=E^.VAL
+      EVAL:=valueOf(E)
   ELSE BEGIN
     S:=FCAR(E);
     IF atomp(S)                THEN
-      if numberp(S)             then eval:=FCONS(S,EVLIS(FCDR(E))) else
-      IF S^.PNAME^='QUOTE'      THEN EVAL:=FCAR(FCDR(E)) ELSE
-      IF S^.PNAME^='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
-      IF S^.PNAME^='TRACE'      THEN BEGIN
+      if variablep(s) or
+         numberp(s)             then EVAL:=FCONS(EVAL(S),EVLIS(FCDR(E))) else
+      IF nameOf(S)='QUOTE'      THEN EVAL:=FCAR(FCDR(E)) ELSE
+      IF nameOf(S)='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
+      IF nameOf(S)='TRACE'      THEN BEGIN
                                       TRACE:=TRUE;
                                       EVAL:=FINDATOM('TRACE') END ELSE
-      IF S^.PNAME^='UNTRACE'    THEN BEGIN
+      IF nameOf(S)='UNTRACE'    THEN BEGIN
                                       TRACE:=FALSE;
                                       (* Scan Page 43 Col. 2 *)
                                       EVAL:=FINDATOM('UNTRACE') END ELSE
-      IF S^.PNAME^='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
-      IF S^.PNAME^=PLUS         THEN EVAL:=FADD(EVLIS(FCDR(E))) ELSE
-      IF S^.PNAME^=MOINS        THEN EVAL:=FSUB(EVLIS(FCDR(E))) ELSE
-      IF S^.PNAME^=MULT         THEN EVAL:=FMULT(EVLIS(FCDR(E))) ELSE
-      IF S^.PNAME^=DIVIS        THEN EVAL:=FDIV(EVLIS(FCDR(E))) ELSE
-      IF S^.PNAME^='DE'         THEN EVAL:=FDE(FCDR(E))
-      ELSE
-            EVAL:=APPLY(S,EVLIS(FCDR(E)))
+      IF nameOf(S)='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
+      IF nameOf(S)='DE'         THEN EVAL:=FDE(FCDR(E)) ELSE
+        EVAL:=APPLY(S,EVLIS(FCDR(E)))
   END;
 END;
 
