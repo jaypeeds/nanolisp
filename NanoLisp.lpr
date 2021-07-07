@@ -332,7 +332,7 @@ begin
         else
         begin
            if (errCode1<>0) or (errCode2<>0) then
-              fopari:=ferreur(PLUS, s)
+              fopari:=ferreur(op, s)
            else
            begin
              case op of
