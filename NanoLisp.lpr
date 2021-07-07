@@ -601,7 +601,7 @@ VAR
 
 BEGIN
 
-  fichier:=CONCAT(nameOf(FILENAME),'.NLSP');
+  fichier:=nameOf(FILENAME);
   IF TRACE THEN
     BEGIN
       WRITELN;
@@ -612,7 +612,6 @@ BEGIN
   IF  atomp(FILENAME) AND not nullp(FILENAME) THEN
     BEGIN
       (* Ajouté pour compatibilité Free Pascal *)
-      (*L'EXTENSION .NLSP EST TOUJOURS AJOUTEE *)
       ASSIGN(INFILE,fichier);
       RESET (INFILE);
       WHILE NOT EOF (INFILE) DO
@@ -844,7 +843,7 @@ BEGIN
   TRU^.VAL:=TRU;
   NILE^.VAL:=NILE;
   NEW(PPSOURCE);
-  PPSOURCE:=NOUVATOM(PPSOURCE, './SOURCE');
+  PPSOURCE:=NOUVATOM(PPSOURCE, './SOURCE.NLSP');
   PSOURCE:=PPSOURCE^.ATOME;
 END;(*INIT*)
 

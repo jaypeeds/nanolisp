@@ -1,3 +1,2 @@
 (TRACE)
-(LOAD 'Exemples/BASIC)
-(QUIT)
+(LOAD 'Exemples/test-fact-acc.nlsp)
