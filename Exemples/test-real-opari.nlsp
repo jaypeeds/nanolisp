@@ -1,0 +1,8 @@
+(UNTRACE)
+(SETQ PI 3.1415926535)
+(DE LONG-CERCLE (R)
+  (* 2.0 PI R))
+(LONG-CERCLE 15.2)
+(*(+ 5 7)5)
+(QUIT)
+
