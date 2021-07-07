@@ -664,10 +664,10 @@ BEGIN
       IF nameOf(FN)='CONS'      THEN APPLY:=FCONS(FCAR(ARGS), FCAR(FCDR(ARGS))) ELSE
       IF nameOf(FN)='ATOM'      THEN APPLY:=FATOM(FCAR(ARGS)) ELSE
       IF nameOf(FN)='EQ'        THEN APPLY:=FEQ(FCAR(ARGS),FCAR(FCDR(ARGS))) ELSE
-      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(FCAR(ARGS))) ELSE
-      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(FCAR(ARGS))) ELSE
-      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(FCAR(ARGS))) ELSE
-      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(FCAR(ARGS))) ELSE
+      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(ARGS)) ELSE
+      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(ARGS)) ELSE
+      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(ARGS)) ELSE
+      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(ARGS)) ELSE
       (* IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE *)
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
