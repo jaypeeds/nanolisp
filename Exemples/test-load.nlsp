@@ -1,0 +1,6 @@
+(TRACE)
+(SETQ FILE 'Exemples/BASIC)
+(OBLIST)
+(LOAD FILE)
+(QUIT)
+

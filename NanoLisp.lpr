@@ -597,21 +597,23 @@ FUNCTION EVAL(E:SGRAPHE):SGRAPHE;FORWARD;
 FUNCTION FLOAD (FILENAME:SGRAPHE):SGRAPHE;
 VAR
   INFILE: INTERACTIVE;
+  fichier: string;
 
 BEGIN
-  IF TRACE THEN
-    BEGIN
-      WRITELN;
-      WRITE(TAB,'LOADING',FD);
-      PRINT(FILENAME);
-      WRITELN;
-  END;
 
   IF  atomp(FILENAME) AND not nullp(FILENAME) THEN
     BEGIN
       (* Ajouté pour compatibilité Free Pascal *)
       (*L'EXTENSION .NLSP EST TOUJOURS AJOUTEE *)
-      ASSIGN(INFILE,CONCAT(FILENAME^.PNAME^,'.NLSP'));
+      fichier:=CONCAT(nameOf(FILENAME),'.NLSP');
+      IF TRACE THEN
+        BEGIN
+          WRITELN;
+          WRITE(TAB,'LOADING',FD);
+          WRITE(fichier);
+          WRITELN;
+      END;
+      ASSIGN(INFILE,fichier);
       RESET (INFILE);
       WHILE NOT EOF (INFILE) DO
         BEGIN
