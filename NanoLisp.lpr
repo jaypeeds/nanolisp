@@ -782,7 +782,7 @@ BEGIN
       IF nameOf(S)='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
       IF nameOf(S)='DE'         THEN EVAL:=FDE(FCDR(E)) ELSE
         begin
-             WRITE(TAB,TAB,'EVAL', GT); PRINT(S); WRITE(DEUXP);PRINT(FCDR(E)); WRITELN;
+             WRITE(TAB,TAB,'EVAL', GT); PRINT(S); WRITE(FD);PRINT(FCDR(E)); WRITELN;
              EVAL:=APPLY(S,EVLIS(FCDR(E)))
         end;
   END;
