@@ -1,4 +1,4 @@
-(TRACE)
+(UNTRACE)
 (CONS 'A '(B C D))
 (DE DUPLIQUE(X) (X X)) 
 (DUPLIQUE 'A)
