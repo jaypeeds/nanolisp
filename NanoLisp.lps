@@ -9,140 +9,15 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="nanolisp"/>
         <IsVisibleTab Value="True"/>
-<<<<<<< HEAD
-        <TopLine Value="649"/>
-        <CursorPos X="30" Y="678"/>
-        <UsageCount Value="115"/>
-=======
-        <TopLine Value="657"/>
-        <CursorPos X="52" Y="662"/>
-        <UsageCount Value="121"/>
->>>>>>> 8dec2fd... Tests de l'application de fonction recursive
+        <TopLine Value="791"/>
+        <CursorPos X="70" Y="829"/>
+        <UsageCount Value="142"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="NanoLisp.lpr"/>
-<<<<<<< HEAD
-        <Caret Line="228" TopLine="210"/>
-      </Position1>
-      <Position2>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="615" TopLine="597"/>
-      </Position2>
-      <Position3>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="616" TopLine="597"/>
-      </Position3>
-      <Position4>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="609" TopLine="597"/>
-      </Position4>
-      <Position5>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="614" TopLine="597"/>
-      </Position5>
-      <Position6>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="213" TopLine="195"/>
-      </Position6>
-      <Position7>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="614" TopLine="596"/>
-      </Position7>
-      <Position8>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="673" TopLine="656"/>
-      </Position8>
-      <Position9>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="666" TopLine="656"/>
-      </Position9>
-      <Position10>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="780" TopLine="763"/>
-      </Position10>
-      <Position11>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="596" TopLine="579"/>
-      </Position11>
-      <Position12>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="650" Column="19" TopLine="816"/>
-      </Position12>
-      <Position13>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="840" TopLine="816"/>
-      </Position13>
-      <Position14>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="577" TopLine="559"/>
-      </Position14>
-      <Position15>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="578" TopLine="559"/>
-      </Position15>
-      <Position16>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="586" TopLine="559"/>
-      </Position16>
-      <Position17>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="590" TopLine="561"/>
-      </Position17>
-      <Position18>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="591" TopLine="562"/>
-      </Position18>
-      <Position19>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="592" TopLine="563"/>
-      </Position19>
-      <Position20>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="594" TopLine="565"/>
-      </Position20>
-      <Position21>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="595" TopLine="566"/>
-      </Position21>
-      <Position22>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="596" TopLine="567"/>
-      </Position22>
-      <Position23>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="477" TopLine="460"/>
-      </Position23>
-      <Position24>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="478" TopLine="460"/>
-      </Position24>
-      <Position25>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="440" TopLine="423"/>
-      </Position25>
-      <Position26>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="441" TopLine="423"/>
-      </Position26>
-      <Position27>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="478" TopLine="461"/>
-      </Position27>
-      <Position28>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="596" TopLine="579"/>
-      </Position28>
-      <Position29>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="810" Column="60" TopLine="579"/>
-      </Position29>
-      <Position30>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="286" Column="30" TopLine="268"/>
-=======
         <Caret Line="586" TopLine="552"/>
       </Position1>
       <Position2>
@@ -150,118 +25,113 @@
         <Caret Line="590" TopLine="552"/>
       </Position2>
       <Position3>
-        <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="591" TopLine="684"/>
-      </Position3>
-      <Position4>
         <Filename Value="NanoLisp.lpr"/>
         <Caret Line="801" TopLine="775"/>
+      </Position3>
+      <Position4>
+        <Filename Value="NanoLisp.lpr"/>
+        <Caret Line="802" TopLine="775"/>
       </Position4>
       <Position5>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="802" TopLine="775"/>
+        <Caret Line="803" TopLine="775"/>
       </Position5>
       <Position6>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="803" TopLine="775"/>
+        <Caret Line="804" TopLine="775"/>
       </Position6>
       <Position7>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="804" TopLine="775"/>
+        <Caret Line="805" TopLine="775"/>
       </Position7>
       <Position8>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="805" TopLine="775"/>
+        <Caret Line="806" TopLine="775"/>
       </Position8>
       <Position9>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="806" TopLine="775"/>
+        <Caret Line="807" TopLine="775"/>
       </Position9>
       <Position10>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="807" TopLine="775"/>
+        <Caret Line="808" TopLine="775"/>
       </Position10>
       <Position11>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="808" TopLine="775"/>
+        <Caret Line="809" TopLine="775"/>
       </Position11>
       <Position12>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="809" TopLine="775"/>
+        <Caret Line="810" TopLine="775"/>
       </Position12>
       <Position13>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="810" TopLine="775"/>
+        <Caret Line="811" TopLine="775"/>
       </Position13>
       <Position14>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="811" TopLine="775"/>
+        <Caret Line="812" TopLine="775"/>
       </Position14>
       <Position15>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="812" TopLine="775"/>
+        <Caret Line="813" TopLine="775"/>
       </Position15>
       <Position16>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="813" TopLine="775"/>
+        <Caret Line="814" TopLine="775"/>
       </Position16>
       <Position17>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="814" TopLine="775"/>
+        <Caret Line="840" TopLine="800"/>
       </Position17>
       <Position18>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="840" TopLine="800"/>
+        <Caret Line="831" TopLine="800"/>
       </Position18>
       <Position19>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="831" TopLine="800"/>
+        <Caret Line="832" TopLine="800"/>
       </Position19>
       <Position20>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="832" TopLine="800"/>
+        <Caret Line="833" TopLine="800"/>
       </Position20>
       <Position21>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="833" TopLine="800"/>
+        <Caret Line="834" TopLine="800"/>
       </Position21>
       <Position22>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="834" TopLine="800"/>
+        <Caret Line="835" TopLine="800"/>
       </Position22>
       <Position23>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="835" TopLine="800"/>
+        <Caret Line="836" TopLine="800"/>
       </Position23>
       <Position24>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="836" TopLine="800"/>
+        <Caret Line="839" TopLine="800"/>
       </Position24>
       <Position25>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="839" TopLine="800"/>
+        <Caret Line="840" TopLine="800"/>
       </Position25>
       <Position26>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="840" TopLine="800"/>
+        <Caret Line="578" TopLine="552"/>
       </Position26>
       <Position27>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="578" TopLine="552"/>
+        <Caret Line="586" TopLine="552"/>
       </Position27>
       <Position28>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="586" TopLine="552"/>
+        <Caret Line="590" TopLine="552"/>
       </Position28>
       <Position29>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="590" TopLine="552"/>
-      </Position29>
-      <Position30>
-        <Filename Value="NanoLisp.lpr"/>
         <Caret Line="591" TopLine="552"/>
->>>>>>> 8dec2fd... Tests de l'application de fonction recursive
-      </Position30>
+      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -269,36 +139,21 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="3">
+    <BreakPoints Count="2">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="843"/>
+        <Line Value="405"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-<<<<<<< HEAD
-        <Line Value="669"/>
-=======
-        <Line Value="673"/>
->>>>>>> 8dec2fd... Tests de l'application de fonction recursive
+        <Line Value="843"/>
       </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="NanoLisp.lpr"/>
-<<<<<<< HEAD
-        <Line Value="666"/>
-=======
-        <Line Value="840"/>
->>>>>>> 8dec2fd... Tests de l'application de fonction recursive
-      </Item3>
     </BreakPoints>
   </Debugging>
 </CONFIG>
