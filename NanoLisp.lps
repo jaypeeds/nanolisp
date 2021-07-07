@@ -9,9 +9,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="nanolisp"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="766"/>
-        <CursorPos X="42" Y="791"/>
-        <UsageCount Value="146"/>
+        <TopLine Value="751"/>
+        <CursorPos X="87" Y="787"/>
+        <UsageCount Value="147"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
@@ -149,7 +149,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="859"/>
+        <Line Value="862"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
