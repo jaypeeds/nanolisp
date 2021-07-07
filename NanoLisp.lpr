@@ -289,6 +289,7 @@ FUNCTION FDE (S: SGRAPHE): SGRAPHE;
 function fopari(const op:string;s:sgraphe): sgraphe;
 var
   iop1, iop2, testReal: real;
+  testInt:integer;
   resultat: string;
   errCode1, errCode2: integer;
   s1, s2: sgraphe;
@@ -338,7 +339,8 @@ begin
              DIVIS: str(iop1 / iop2, resultat);
            end;
            val(resultat, testReal, errCode1);
-           if ((pos('.0000000000000000E',resultat)<>0) and (errCode1=0)) then
+           testInt:=round(testReal);
+           if ((abs(testReal - testInt)<1.0E-10) and (errCode1=0)) then
              (* Convertir en entier *)
              begin
                str(round(testReal), resultat);

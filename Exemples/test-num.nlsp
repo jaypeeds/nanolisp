@@ -1,4 +1,4 @@
-(TRACE)
+(UNTRACE)
 1
 (1)
 (1 1)
@@ -18,10 +18,10 @@
 (DE CARRE(X)
   (* (CONS X (CONS X ()))))
 (CARRE 3)
-(DIV (CARRE 6) 2)
+(/ (CARRE 6) 2)
 (SETQ N 10)
 (1 N)
 (N 1)
 (OBLIST)
-(CONS(N 1))
+(CONS N 1)
 (QUIT)
