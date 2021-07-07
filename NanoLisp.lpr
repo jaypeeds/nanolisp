@@ -786,6 +786,10 @@ BEGIN
              EVAL:=APPLY(S,EVLIS(FCDR(E)))
         end;
   END;
+  if trace then
+    begin
+      write(tab,'=');print(eval);writeln;
+    end;
 END;
 
 (******* INITIALISATION ******)

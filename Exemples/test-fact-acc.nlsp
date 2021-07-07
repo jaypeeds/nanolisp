@@ -2,7 +2,7 @@
 (DE FACTACC(N ACC) 
   (COND 
     ((EQ N 0) 1) 
-     (T       FACTACC (-(N 1)) (*(N ACC)))))
-(DE FACT(N) FACTACC(N 1))
-(FACT 5)
+     (T      (FACTACC (-(N 1)) (*(N ACC))))))
+(DE FACT(N) FACTACC (N 1))
+(FACTACC (5 1))
 (QUIT)
