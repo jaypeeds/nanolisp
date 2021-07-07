@@ -288,7 +288,7 @@ FUNCTION FDE (S: SGRAPHE): SGRAPHE;
   END;
 function fopari(const op:string;s:sgraphe): sgraphe;
 var
-  iop1, iop2: integer;
+  iop1, iop2, testReal: real;
   resultat: string;
   errCode1, errCode2: integer;
   s1, s2: sgraphe;
@@ -309,19 +309,19 @@ begin
           if errCode1=0 then
             begin
               (* Si le nombre existe, on le réutilise *)
-              s1:=FINDATOM(s^.pname^);
+              s1:=FINDATOM(nameOf(s));
               if not nullp(s1) then
                 fopari:=s1
               else
                 (* Sinon on le crée *)
-                fopari:=nouvatom(oblist, s^.pname^)^.atome;
+                fopari:=nouvatom(oblist, nameOf(s))^.atome;
             end
         else
         begin
           fopari:=ferreur(op, s);
         end;
       end
-      else (* Reduction de la liste par l'operation *)
+    else (* Reduction de la liste par l'operation *)
       begin
         s1:=fopari(op,fcar(s));
         val(nameOf(s1),iop1,errCode1);
@@ -331,22 +331,23 @@ begin
           fopari:=ferreur(op,s)
         else
         begin
-           if (errCode1<>0) or (errCode2<>0) then
-              fopari:=ferreur(op, s)
-           else
-           begin
-             case op of
-               PLUS:str(iop1 + iop2, resultat);
-               MOINS:str(iop1 - iop2, resultat);
-               MULT:str(iop1 * iop2, resultat);
-               DIVIS: str(iop1 div iop2, resultat);
+           case op of
+             PLUS:str(iop1 + iop2, resultat);
+             MOINS:str(iop1 - iop2, resultat);
+             MULT:str(iop1 * iop2, resultat);
+             DIVIS: str(iop1 / iop2, resultat);
+           end;
+           val(resultat, testReal, errCode1);
+           if ((pos('.0000000000000000E',resultat)<>0) and (errCode1=0)) then
+             (* Convertir en entier *)
+             begin
+               str(round(testReal), resultat);
              end;
-             s1:=FINDATOM(resultat);
-             if not nullp(s1) then
-               fopari:=s1
-             else
-               fopari:=NOUVATOM(oblist, resultat)^.atome;
-           end
+           s1:=FINDATOM(resultat);
+           if not nullp(s1) then
+             fopari:=s1
+           else
+             fopari:=NOUVATOM(oblist, resultat)^.atome;
         end;
       end;
   end;
