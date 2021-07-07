@@ -343,7 +343,7 @@ begin
            if ((abs(testReal - testInt)<1.0E-10) and (errCode1=0)) then
              (* Convertir en entier *)
              begin
-               str(round(testReal), resultat);
+               str(testInt, resultat);
              end;
            s1:=FINDATOM(resultat);
            if not nullp(s1) then
