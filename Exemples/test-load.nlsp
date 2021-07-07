@@ -1,6 +1,1 @@
-(TRACE)
-(SETQ FILE 'Exemples/BASIC)
-(OBLIST)
-(LOAD FILE)
-(QUIT)
-
+Exemples/test-fact-acc.nlsp
