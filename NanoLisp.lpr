@@ -601,18 +601,18 @@ VAR
 
 BEGIN
 
+  fichier:=CONCAT(nameOf(FILENAME),'.NLSP');
+  IF TRACE THEN
+    BEGIN
+      WRITELN;
+      WRITE(TAB,'LOADING',FD);
+      WRITE(fichier);
+      WRITELN;
+  END;
   IF  atomp(FILENAME) AND not nullp(FILENAME) THEN
     BEGIN
       (* Ajouté pour compatibilité Free Pascal *)
       (*L'EXTENSION .NLSP EST TOUJOURS AJOUTEE *)
-      fichier:=CONCAT(nameOf(FILENAME),'.NLSP');
-      IF TRACE THEN
-        BEGIN
-          WRITELN;
-          WRITE(TAB,'LOADING',FD);
-          WRITE(fichier);
-          WRITELN;
-      END;
       ASSIGN(INFILE,fichier);
       RESET (INFILE);
       WHILE NOT EOF (INFILE) DO
@@ -686,7 +686,12 @@ BEGIN
                                         APPLY:=NILE;
                                         FINSESS:=TRUE;
                                      END ELSE
-      IF nameOf(FN)='LOAD'      THEN APPLY:=FLOAD(FCAR(ARGS)) ELSE
+      IF nameOf(FN)='LOAD'      THEN BEGIN
+                                       if (quotep(fcar(fcar(args)))) then
+                                         apply:=fload(fcar(fcdr(fcar(args))))
+                                       else
+                                         APPLY:=FLOAD(FCAR(ARGS))
+                                       END ELSE
             (* CE N'EST PAS UNE FONCTION PREDEFINIE
             ON OBTIENT SA DEFINITION PAR EVAL ET ON APPLIOUE *)
       APPLY:=APPLY(EVAL(FN),ARGS)
