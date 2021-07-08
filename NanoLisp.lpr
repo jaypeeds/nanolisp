@@ -669,7 +669,11 @@ BEGIN
       WRITELN;
     END;
     IF nullp(FN) THEN
-      APPLY:=FERREUR('APPLY', FN)
+      (* APPLY:=FERREUR('APPLY', FN) *)
+      begin
+        apply:=NILE;
+        exit;
+      end
     ELSE IF atomp(FN) THEN
       (* FONCTIONS PREDEFINIES *)
       IF nameOf(FN)='CAR'       THEN APPLY:=FCAR(FCAR(ARGS)) ELSE
@@ -681,7 +685,7 @@ BEGIN
       IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(ARGS)) ELSE
       IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(ARGS)) ELSE
       IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(ARGS)) ELSE
-      (* IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE *)
+      IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
                                         APPLY:=NEANT;
