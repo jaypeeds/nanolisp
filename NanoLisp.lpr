@@ -57,7 +57,7 @@ TYPE
   INTERACTIVE=TEXT;
 
 VAR (* ---- Globales ---- *)
-  NILE, TRU, AQUOTE, LAMBDA, S, M, PSOURCE, PCONSOLE, ZERO, UN:SGRAPHE;
+  NILE, TRU, AQUOTE, LAMBDA, S, M, PSOURCE, PCONSOLE, ZERO, UN, NEANT:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
@@ -684,7 +684,7 @@ BEGIN
       (* IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE *)
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
-                                        APPLY:=FCAR(ARGS);
+                                        APPLY:=NEANT;
                                      END ELSE
       IF nameOf(FN)='OBLIST'    THEN BEGIN
                                         APPLY:=NILE;
@@ -845,6 +845,7 @@ BEGIN
   OBCOUR:=NOUVATOM(OBCOUR, 'QUIT');
   OBCOUR:=NOUVATOM(OBCOUR, '0'); ZERO:=OBCOUR^.ATOME;
   OBCOUR:=NOUVATOM(OBCOUR, '1'); UN:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, VIDE); NEANT:=OBCOUR^.ATOME;
 
   TRU^.VAL:=TRU;
   NILE^.VAL:=NILE;
