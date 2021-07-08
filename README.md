@@ -41,9 +41,9 @@ mais pour être exploitables, ces opérateurs devraient tous avoir un résultat 
 FNULL ne respecte pas cette convention.
 
 ## Et ensuite ? 
-- Implémenter l'arithmétique entière. En cours.
-- Permettre des commentaires pour documenter le code. 
-- Permettre la lecture à la console.
+- Implémenter l'arithmétique entière. Fait !
+- Permettre des commentaires pour documenter le code. A faire !
+- Permettre la lecture à la console. Fait !
 
 La méthode consiste à introduire la syntaxe nouvelle dans le source à intepréter, puis à analyser le crash sous débugger et 
 modifier le code en fonction.
