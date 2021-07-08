@@ -1,0 +1,45 @@
+;  LA FONCTION PRINCIPALE
+(DE JOUE()
+  (SETQ MOTSLUS (PREND '(I I I I I)))   ; LIT 5 MOTS ET LES STOCKE
+                                        ; DANS MOTSLUS
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  ; REMPLISSAGE
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  ; D'UN ECRAN POUR
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  ; FAIRE DISPARAITRE
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  ; LES 1ERS MOTS
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)
+  (PRINT 'A-VOUS)
+  (CHERCHE MOTSLUS '(I I I I I)))                     ; DONNE 5 ESSAIS POUR RETROUVER
+                                                      ; LES MOTS DE MOTSLUS
+  ; LECTURE D'UN MOT PRECEDEE D'UNE INVITE
+  (DE LIT() (PRINT 'MOT:) (READ))
+
+  ; LECTURES DES INDX PREMIERS MOTS
+  (DE PREND(INDX)
+    (COND
+      (EQ INDX () ())                                 ; PLUS RIEN A LIRE
+      (T (CONS (LIT) (PREND (CDR INDX))))))           ; LIT UN MOT ET PASSE A LA SUITE
+
+  ; COMPARE "INDX" NOUVEAUX MOTS AVEC LES MOTS DE MOTSLUS
+  (DE CHERCHE (MOTLUS INOX)
+    (COND
+      ((EQ INDX ())) (PRINT 'RESULTAT) () )           ; PLUS D'ESSAIS POSSIBLES
+      (T (CONS                                        ; CONSTRUCTION DE LA LISTE RESULTAT DONT LE 1ER
+                                                      ; ELEMENT (LE CAR) EST LE RESULTAT POUR LE MOT COURANT ET LE
+                                                      ; RESTE (CDR) UN APPEL RECURSIF A CHERCHE
+(COND
+  ((EQ (PRESENT (LIT) LL) T) '!)                      ; 1 - LIT UN MOT
+                                                      ; 2 - VERIFIE S'IL EST DANS MOTLUS
+                                                      ;  EN APPELANT PRESENT
+                                                      ; 3 - SI PRESENT REND VRAI <T>,
+                                                      ;  I SERA 'RENDU* PAR L'EXPRESSION
+                                                      ;  POUR SIGNIFIER 1 SUCCES
+  (T ()) ))                                           ; LE MOT COURANT N'EST PAS
+                                                      ; DANS MOTSLUS, LE RESULTAT EST DONC O
+(CHERCHE (MOTSLUS CDR INDX)) ))                       ; APPEL RECURSIF AVEC INDX DIMINUEE DE 1 {ELEMENT POUR LES ESSAIS SUIVANTS
+
+; TESTE SI MOT EST PRESENT DANS MOTLUS
+(DE PRESENT (MOT MOTSLUS)
+  (COND
+  ((EQ MOTSLUS ()) ())                                ;  MOTSLUS EST VIDE -> ECHEC
+  ((EQ MOT (CAR MOTSLUS)) T)                          ; MOT EST LE 1ER ELEMENT DE MOTSLUS -> SUCCES
+  (T (PRESENT MOT (CDR MOTSLUS)))))                   ; SINON ON CONTINUE

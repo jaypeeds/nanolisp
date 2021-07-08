@@ -1,0 +1,32 @@
+(DE JOUE()
+  (SETQ MOTSLUS (PREND '(I I I I I)))   
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)  
+  (PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)(PRINT '.)
+  (PRINT 'A-VOUS)
+  (CHERCHE MOTSLUS '(I I I I I)))                     
+                                                      
+(DE LIT() (PRINT 'MOT:) (READ))
+  
+(DE PREND(INDX)
+  (COND
+    (EQ INDX () ())                                 
+    (T (CONS (LIT) (PREND (CDR INDX))))))           
+
+(DE CHERCHE (MOTLUS INOX)
+  (COND
+    ((EQ INDX ())) (PRINT 'RESULTAT) () )           
+    (T (CONS                                        
+        (COND
+          ((EQ (PRESENT (LIT) LL) T) '!)                      
+           (T ()) ))                                           
+  (CHERCHE (MOTSLUS CDR INDX)) ))                     
+
+
+(DE PRESENT (MOT MOTSLUS)
+  (COND
+  ((EQ MOTSLUS ()) ())                                
+  ((EQ MOT (CAR MOTSLUS)) T)                          
+  (T (PRESENT MOT (CDR MOTSLUS)))))                   
