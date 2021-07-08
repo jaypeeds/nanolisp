@@ -9,9 +9,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="nanolisp"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="644"/>
-        <CursorPos X="14" Y="675"/>
-        <UsageCount Value="200"/>
+        <TopLine Value="694"/>
+        <CursorPos X="96" Y="770"/>
+        <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
@@ -143,42 +143,35 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="5">
+    <BreakPoints Count="4">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="905"/>
+        <Line Value="902"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="802"/>
+        <Line Value="741"/>
       </Item2>
       <Item3>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="741"/>
+        <Line Value="744"/>
       </Item3>
       <Item4>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="744"/>
-      </Item4>
-      <Item5>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="NanoLisp.lpr"/>
         <Line Value="412"/>
-      </Item5>
+      </Item4>
     </BreakPoints>
     <Watches Count="1">
       <Item1>
