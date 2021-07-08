@@ -7,8 +7,6 @@ CONST
   GUIL='"';
   BAR='|';
   FD='->';
-  PROMPT1='?';
-  PROMPT2='#';
   GT='>';
   DOT='.';
   SPC=' ';
@@ -25,6 +23,8 @@ CONST
   TAB=CHR(9);   (* Séparateurs non-imprimables *)
   CR=CHR(13);
   LF=CHR(10);
+  PROMPT1=TAB;
+  PROMPT2=VIDE;
 
 
 TYPE
@@ -57,7 +57,7 @@ TYPE
   INTERACTIVE=TEXT;
 
 VAR (* ---- Globales ---- *)
-  NILE, TRU, AQUOTE, LAMBDA, S, M, PSOURCE, ZERO, UN:SGRAPHE;
+  NILE, TRU, AQUOTE, LAMBDA, S, M, PSOURCE, PCONSOLE, ZERO, UN:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
@@ -598,6 +598,7 @@ FUNCTION FLOAD (FILENAME:SGRAPHE):SGRAPHE;
 VAR
   INFILE: INTERACTIVE;
   fichier: string;
+  s1, s2: sgraphe;
 
 BEGIN
 
@@ -611,14 +612,22 @@ BEGIN
   END;
   IF  atomp(FILENAME) AND not nullp(FILENAME) THEN
     BEGIN
-      (* Ajouté pour compatibilité Free Pascal *)
-      ASSIGN(INFILE,fichier);
-      RESET (INFILE);
-      WHILE NOT EOF (INFILE) DO
+      if FILENAME <> PCONSOLE then
+        begin
+          (* Ajouté pour compatibilité Free Pascal *)
+          ASSIGN(INFILE,fichier);
+          RESET (INFILE);
+        end
+      else
+        INFILE:=INPUT;
+      WHILE NOT EOF (INFILE) and not (ERREUR or FINSESS) DO
         BEGIN
+          s1:=FREAD(INFILE);
+          WRITE(PROMPT2, SPC);
+          s2:=EVAL(s1);
+          PRINT(s2);
           WRITELN;
-          WRITE(PROMPT1,SPC);
-          PRINT(EVAL(FREAD(INFILE)));
+          WRITE(PROMPT1, SPC);
         END;
         CLOSE(INFILE);
         FLOAD:=TRU;
@@ -768,10 +777,7 @@ BEGIN
     END;
   IF atomp(E) THEN
     IF nullp(E) or nullp(valueOf(E))THEN
-      BEGIN
-        EVAL :=FERREUR('EXPRESSION INDEFINIE' , E);
-        EXIT(*EVAL*);
-      END
+      EVAL:=NILE
     ELSE
       EVAL:=valueOf(E)
   ELSE BEGIN
@@ -808,7 +814,7 @@ END;
 PROCEDURE INIT;
 
 VAR
-  OBCOUR, PPSOURCE:PTOBLIST;
+  OBCOUR, PPSOURCE, PPCONSOLE:PTOBLIST;
 
 BEGIN
   TRACE:=FALSE;
@@ -843,30 +849,26 @@ BEGIN
   TRU^.VAL:=TRU;
   NILE^.VAL:=NILE;
   NEW(PPSOURCE);
+  NEW(PPCONSOLE);
   PPSOURCE:=NOUVATOM(PPSOURCE, './SOURCE.NLSP');
   PSOURCE:=PPSOURCE^.ATOME;
+  PPCONSOLE:=NOUVATOM(PPCONSOLE, 'CONSOLE');
+  PCONSOLE:=PPCONSOLE^.ATOME;
 END;(*INIT*)
 
 (* Corps du programme principal *)
 BEGIN
     FINSESS:=FALSE;
     INIT;
-    WRITELN('****************************');
-    WRITELN('         NANO-LISP');
-    WRITELN;
-    WRITELN('         JM HUSSON');
-    WRITELN('****************************');
-    WRITE('Source: '); PRINT(PSOURCE);WRITELN('.NLSP');
+    WRITELN('NANO-LISP - (C)JM HUSSON (1985), JPDS (2021)');
 
     REPEAT
       WRITE(PROMPT1,SPC);
-      M:=FLOAD(PSOURCE);
-      WRITELN;
+      M:=FLOAD(PCONSOLE);
       ERREUR :=FALSE;
       S:=EVAL(M);
       IF NOT (FINSESS OR ERREUR) THEN
       BEGIN
-        WRITELN(PROMPT2,SPC);
         PRINT(S);
       END;
       WRITELN;
