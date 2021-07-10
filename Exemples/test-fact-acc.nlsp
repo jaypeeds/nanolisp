@@ -4,5 +4,3 @@
     ((EQ N 0) ACC) 
      (T      (FACTACC (- N 1) (* N ACC)))))
 (DE FACT(N) (FACTACC N 1))
-(FACT 5)
-(QUIT)

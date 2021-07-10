@@ -20,11 +20,13 @@ CONST
   MULT='*';
   DIVIS='/';
   DEUXP=':';
+  NUL='NIL';
   TAB=CHR(9);   (* Séparateurs non-imprimables *)
   CR=CHR(13);
   LF=CHR(10);
   PROMPT1=TAB;
   PROMPT2=VIDE;
+  PROMPT3='?';
 
 
 TYPE
@@ -515,7 +517,7 @@ PROCEDURE PRINT(S:SGRAPHE);
            if not nullp(S) then
               WRITE(nameOf(S))
            else
-              WRITE('NIL');
+              WRITE(NUL,SPC);
            BLANCPRINT:=FALSE;
          END;
        (* Corps de PRINT1 *)
@@ -620,14 +622,15 @@ BEGIN
         end
       else
         INFILE:=INPUT;
+      WRITE(PROMPT1);
       WHILE NOT EOF (INFILE) and not (ERREUR or FINSESS) DO
         BEGIN
           s1:=FREAD(INFILE);
-          WRITE(PROMPT2, SPC);
+          WRITE(PROMPT2);
           s2:=EVAL(s1);
           PRINT(s2);
           WRITELN;
-          WRITE(PROMPT1, SPC);
+          WRITE(PROMPT1);
         END;
         CLOSE(INFILE);
         FLOAD:=TRU;
@@ -865,7 +868,6 @@ BEGIN
     WRITELN('NANO-LISP - (C)JM HUSSON (1985), JPDS (2021)');
 
     REPEAT
-      WRITE(PROMPT1,SPC);
       M:=FLOAD(PCONSOLE);
       ERREUR :=FALSE;
       S:=EVAL(M);

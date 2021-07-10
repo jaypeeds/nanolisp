@@ -1,0 +1,3 @@
+(SETQ N (READ))
+
+(PRINT N)

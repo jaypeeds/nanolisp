@@ -9,8 +9,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="nanolisp"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="694"/>
-        <CursorPos X="96" Y="770"/>
+        <TopLine Value="829"/>
+        <CursorPos X="42" Y="519"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -18,123 +18,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="415" TopLine="386"/>
+        <Caret Line="634" Column="16" TopLine="608"/>
       </Position1>
       <Position2>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="416" TopLine="386"/>
+        <Caret Line="26" Column="14"/>
       </Position2>
       <Position3>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="418" TopLine="386"/>
+        <Caret Line="639" Column="24" TopLine="614"/>
       </Position3>
       <Position4>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="419" TopLine="386"/>
+        <Caret Line="822" Column="17" TopLine="797"/>
       </Position4>
       <Position5>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="431" TopLine="387"/>
+        <Caret Line="853" Column="29" TopLine="836"/>
       </Position5>
       <Position6>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="433" TopLine="389"/>
+        <Caret Line="635" TopLine="589"/>
       </Position6>
       <Position7>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="434" TopLine="390"/>
+        <Caret Line="628" TopLine="598"/>
       </Position7>
       <Position8>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="435" TopLine="391"/>
+        <Caret Line="607" TopLine="598"/>
       </Position8>
       <Position9>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="437" TopLine="393"/>
+        <Caret Line="608" TopLine="598"/>
       </Position9>
       <Position10>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="438" TopLine="394"/>
+        <Caret Line="615" TopLine="598"/>
       </Position10>
       <Position11>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="439" TopLine="395"/>
+        <Caret Line="617" TopLine="598"/>
       </Position11>
       <Position12>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="412" TopLine="395"/>
+        <Caret Line="624" TopLine="598"/>
       </Position12>
       <Position13>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="413" TopLine="395"/>
+        <Caret Line="625" TopLine="598"/>
       </Position13>
       <Position14>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="415" TopLine="395"/>
+        <Caret Line="637" Column="24" TopLine="612"/>
       </Position14>
       <Position15>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="416" TopLine="395"/>
+        <Caret Line="635" Column="32" TopLine="612"/>
       </Position15>
       <Position16>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="418" TopLine="395"/>
+        <Caret Line="637" Column="22" TopLine="612"/>
       </Position16>
       <Position17>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="419" TopLine="395"/>
+        <Caret Line="869" TopLine="827"/>
       </Position17>
       <Position18>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="439" TopLine="395"/>
+        <Caret Line="105" Column="32" TopLine="67"/>
       </Position18>
       <Position19>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="433" TopLine="395"/>
+        <Caret Line="424" Column="31" TopLine="396"/>
       </Position19>
       <Position20>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="398" Column="62" TopLine="395"/>
+        <Caret Line="102" Column="25" TopLine="79"/>
       </Position20>
       <Position21>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="435" TopLine="395"/>
+        <Caret Line="423" Column="19" TopLine="395"/>
       </Position21>
       <Position22>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="437" TopLine="395"/>
+        <Caret Line="424" TopLine="394"/>
       </Position22>
       <Position23>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="438" TopLine="395"/>
+        <Caret Line="427" TopLine="420"/>
       </Position23>
       <Position24>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="439" TopLine="395"/>
+        <Caret Line="869" TopLine="827"/>
       </Position24>
       <Position25>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="412" TopLine="395"/>
+        <Caret Line="868" Column="13" TopLine="827"/>
       </Position25>
       <Position26>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="413" TopLine="395"/>
+        <Caret Line="623" Column="20" TopLine="605"/>
       </Position26>
       <Position27>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="415" TopLine="395"/>
+        <Caret Line="868" Column="13" TopLine="827"/>
       </Position27>
       <Position28>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="416" TopLine="395"/>
+        <Caret Line="630" Column="17" TopLine="605"/>
       </Position28>
       <Position29>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="418" TopLine="395"/>
+        <Caret Line="441" Column="64" TopLine="398"/>
       </Position29>
       <Position30>
         <Filename Value="NanoLisp.lpr"/>
-        <Caret Line="419" TopLine="395"/>
+        <Caret Line="23" Column="13"/>
       </Position30>
     </JumpHistory>
     <RunParams>
@@ -143,35 +143,28 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="4">
+    <BreakPoints Count="3">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="902"/>
+        <Line Value="924"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="741"/>
+        <Line Value="891"/>
       </Item2>
       <Item3>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="NanoLisp.lpr"/>
-        <Line Value="744"/>
+        <Line Value="615"/>
       </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="NanoLisp.lpr"/>
-        <Line Value="412"/>
-      </Item4>
     </BreakPoints>
     <Watches Count="1">
       <Item1>
