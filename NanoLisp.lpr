@@ -27,8 +27,14 @@ CONST
   PROMPT1=TAB;
   PROMPT2=VIDE;
   PROMPT3='?';
-
-
+  PI=4.0*ARCTAN(1.0);
+  _SIN='SIN';
+  _COS='COS';
+  _TAN='TAN';
+  _ATAN='ATAN';
+  _RAC='RAC';
+  _ABS='ABS';
+  EPSILON=1.0E-6;
 TYPE
   SMALLSTRING=STRING (*[MAXCHAINE]*) ;
   TYPTOKEN=(PGAUCHE, PDROITE,APOS, SYMBOLE);
@@ -59,7 +65,7 @@ TYPE
   INTERACTIVE=TEXT;
 
 VAR (* ---- Globales ---- *)
-  NILE, TRU, AQUOTE, LAMBDA, S, M, PCONSOLE, ZERO, UN, NEANT:SGRAPHE;
+  NILE, TRU, AQUOTE, LAMBDA, S, M, PCONSOLE, ZERO, UN, PPI, NEANT:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
 
@@ -101,7 +107,10 @@ begin
        (not numberp(s)) and
        autoevaluatedp(s^.val);
 end;
-
+function integerp(testReal, epsilon:real): boolean;
+begin
+  integerp:=(abs(testReal - trunc(testReal)) < epsilon);
+end;
 (***** FONCTIONS UTILITAIRES ******)
 function isNumeric(const potentialNumeric: string): boolean;
 (* Empruntée à RosettaCode.org *)
@@ -128,9 +137,18 @@ begin
 end;
 function valueOf(S:sgraphe): SGRAPHE;
 begin
-   (* iUtilisable seulement à droite du := *)
+   (* Utilisable seulement à droite du := *)
    valueOf:=S^.VAL;
 end;
+function degresEnRadians(degres:real):real;
+begin
+  degresEnRadians:=(degres/180.0)*PI;
+end;
+function radiansEnDegres(radians:real):real;
+begin
+  radiansEnDegres:=(radians/PI)*180.0;
+end;
+
 
 (***** FONCTIONS UTILITAIRES ******)
 
@@ -291,7 +309,6 @@ FUNCTION FDE (S: SGRAPHE): SGRAPHE;
 function fopari(const op:string;s:sgraphe): sgraphe;
 var
   iop1, iop2, testReal: real;
-  testInt:integer;
   resultat: string;
   errCode1, errCode2: integer;
   s1, s2: sgraphe;
@@ -333,20 +350,19 @@ begin
         if (errCode1<>0) or (errCode2<>0) then
           fopari:=ferreur(op,s)
         else
-        begin
+          begin
            case op of
-             PLUS:str(iop1 + iop2, resultat);
-             MOINS:str(iop1 - iop2, resultat);
-             MULT:str(iop1 * iop2, resultat);
-             DIVIS: str(iop1 / iop2, resultat);
+             PLUS:testReal:=iop1 + iop2;
+             MOINS:testReal:=iop1 - iop2;
+             MULT:testReal:=iop1 * iop2;
+             DIVIS: testReal:=iop1 / iop2;
            end;
-           val(resultat, testReal, errCode1);
-           testInt:=round(testReal);
-           if ((abs(testReal - testInt)<1.0E-10) and (errCode1=0)) then
+           if (integerp(testReal, EPSILON)) then
              (* Convertir en entier *)
-             begin
-               str(testInt, resultat);
-             end;
+             str(trunc(testReal), resultat)
+           else
+             str(testReal, resultat);
+
            s1:=FINDATOM(resultat);
            if not nullp(s1) then
              fopari:=s1
@@ -372,6 +388,63 @@ function fdiv(s:sgraphe): sgraphe;
 begin
   fdiv:=fopari(DIVIS,s);
 end;
+(* FONCTIONS TRIGONOMETRIQUE *)
+function fmath(func:string; smathentree:SGRAPHE): SGRAPHE;
+var
+  angle, mathval, mathvalbrute:real;
+  resultat:string;
+  errCode:integer;
+  strig:sgraphe;
+begin
+  if numberp(smathentree) then
+    begin
+      val(nameOf(smathentree), angle, errCode);
+      mathvalbrute:=angle;
+      angle:=degresEnRadians(angle);
+      if errCode=0 then
+        begin
+        case func of
+            _SIN: mathval:= sin(angle);
+            _COS: mathval:= cos(angle);
+            _TAN: mathval:= sin(angle)/cos(angle);
+           _ATAN: mathval:= radiansEnDegres(arctan(mathvalbrute));
+            _RAC: mathval:= sqrt(mathvalbrute);
+            _ABS: mathval:= abs(mathvalbrute);
+        end;
+        if integerp(mathval, EPSILON) then
+          str(trunc(mathval), resultat)
+        else
+          str(mathval, resultat);
+
+        strig:=FINDATOM(resultat);
+        if not nullp(strig) then
+             fmath:=strig
+           else
+             fmath:=NOUVATOM(oblist, resultat)^.atome;
+        end
+      else
+         ferreur(func+'-1', smathentree);
+    end
+  else
+    fmath:= ferreur(func+'-2', smathentree);
+end;
+function fsin(degres:SGRAPHE): SGRAPHE;
+begin
+  fsin:=fmath(_SIN,degres);
+end;
+function fcos(degres:SGRAPHE): SGRAPHE;
+begin
+  fcos:=fmath(_COS,degres);
+end;
+function ftan(degres:SGRAPHE): SGRAPHE;
+begin
+  ftan:=fmath(_TAN,degres);
+end;
+function fatan(degres:SGRAPHE): SGRAPHE;
+begin
+  fatan:=fmath(_ATAN,degres);
+end;
+(* Affectation d'une variable *)
 FUNCTION EVLIS(ARGS: SGRAPHE): SGRAPHE; FORWARD;
 FUNCTION FSETQ(S:SGRAPHE): SGRAPHE;
 BEGIN
@@ -688,6 +761,13 @@ BEGIN
       IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(ARGS)) ELSE
       IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(ARGS)) ELSE
       IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(ARGS)) ELSE
+      IF nameOf(FN)=_SIN         THEN APPLY:=FSIN(EVAL(FCAR((ARGS)))) ELSE
+      IF nameOf(FN)=_COS         THEN APPLY:=FCOS(EVAL(FCAR((ARGS)))) ELSE
+      IF nameOf(FN)=_TAN         THEN APPLY:=FTAN(EVAL(FCAR((ARGS)))) ELSE
+      IF nameOf(FN)=_ATAN        THEN APPLY:=FATAN(EVAL(FCAR((ARGS)))) ELSE
+      IF nameOf(FN)=_RAC         THEN APPLY:=FMATH(_RAC,EVAL(FCAR((ARGS)))) ELSE
+      IF nameOf(FN)=_ABS         THEN APPLY:=FMATH(_ABS,EVAL(FCAR((ARGS)))) ELSE
+      IF nameOf(FN)='PI'         THEN APPLY:=PPI ELSE
       IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
@@ -769,6 +849,9 @@ FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
     EVALUEE DES ARGUMENTS *)
 VAR
   S:SGRAPHE;
+  testReal:real;
+  errCode:Integer;
+  latome:sgraphe;
 BEGIN
   IF ERREUR THEN
     BEGIN
@@ -822,9 +905,11 @@ PROCEDURE INIT;
 
 VAR
   OBCOUR, PPCONSOLE:PTOBLIST;
+  sPI: STRING;
 
 BEGIN
   TRACE:=FALSE;
+  str(PI, sPI);
   (* CREATION DU PREMIER ATOME *)
   NEW(NILE);
   NEW(NILE^.PNAME);
@@ -852,6 +937,7 @@ BEGIN
   OBCOUR:=NOUVATOM(OBCOUR, 'QUIT');
   OBCOUR:=NOUVATOM(OBCOUR, '0'); ZERO:=OBCOUR^.ATOME;
   OBCOUR:=NOUVATOM(OBCOUR, '1'); UN:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, sPI); PPI:=OBCOUR^.ATOME;
   OBCOUR:=NOUVATOM(OBCOUR, VIDE); NEANT:=OBCOUR^.ATOME;
 
   TRU^.VAL:=TRU;
