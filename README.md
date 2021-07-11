@@ -39,11 +39,13 @@ fonction, sont opérationnelles.
 Les conventions de nommage devraient être plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR
 mais pour être exploitables, ces opérateurs devraient tous avoir un résultat de type S-Exp, ou SGRAPHE dans ce code.
 FNULL ne respecte pas cette convention.
+Petite note sur la lecture clavier, il faut 2 return pour conclure une saisie, à cause du test EOF qui réclame cette saisie supplémentaire.
 
 ## Et ensuite ? 
-- Implémenter l'arithmétique entière. Fait !
+- Implémenter l'arithmétique entière. Fait (en réel aussi) !
 - Permettre des commentaires pour documenter le code. A faire !
-- Permettre la lecture à la console. Fait !
+- Permettre la lecture à la console. Fait (la lecture de fichier aussi) !
+- Fonctions mathématiques (en degrés). Fait !
 
 La méthode consiste à introduire la syntaxe nouvelle dans le source à intepréter, puis à analyser le crash sous débugger et 
 modifier le code en fonction.
