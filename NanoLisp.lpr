@@ -4,8 +4,6 @@ PROGRAM nanolisp(INPUT, OUTPUT);
 CONST
   MAXCHAINE=255;(* LES NOMS AURONT 12 CARACTERES MAXIMUM *)
   QT='''';
-  GUIL='"';
-  BAR='|';
   FD='->';
   GT='>';
   DOT='.';
@@ -13,20 +11,15 @@ CONST
   PG='(';
   PD=')';
   VIDE='';
-  AG='{';
-  AD='}';
   PLUS='+';
   MOINS='-';
   MULT='*';
   DIVIS='/';
-  DEUXP=':';
   NUL='NIL';
   TAB=CHR(9);   (* Séparateurs non-imprimables *)
-  CR=CHR(13);
   LF=CHR(10);
   PROMPT1=TAB;
   PROMPT2=VIDE;
-  PROMPT3='?';
   PI=4.0*ARCTAN(1.0);
   _SIN='SIN';
   _COS='COS';
@@ -130,7 +123,8 @@ begin
       as well as the '0x' (or '0X') prefix for hexadecimal values. *)
    val(potentialNumeric, potentialInteger, integerError);
    val(potentialNumeric, potentialReal, realError);
-
+   (* Pour eliminer le warning à la compil' *)
+   if potentialInteger * potentialReal <> 0 then ;
    isNumeric :=((integerError = 0) or (realError = 0));
 end;
 function nameOf(S:sgraphe): SMALLSTRING;
@@ -775,6 +769,7 @@ BEGIN
       IF nameOf(FN)=_RAC         THEN APPLY:=FMATH(_RAC,EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_ABS         THEN APPLY:=FMATH(_ABS,EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_PI          THEN APPLY:=FPI ELSE
+      IF nameOf(FN)='NULL'      THEN APPLY:=FNULL(FCAR(ARGS)) ELSE
       IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
@@ -794,6 +789,11 @@ BEGIN
                                        else
                                          APPLY:=FLOAD(FCAR(ARGS))
                                        END ELSE
+      IF nameOf(FN)='EVAL'       THEN BEGIN
+                                       if quotep(fcar(fcar(ARGS))) then
+                                         APPLY:=EVAL(FCAR(FCDR(FCAR(ARGS))))
+                                     END ELSE
+
             (* CE N'EST PAS UNE FONCTION PREDEFINIE
             ON OBTIENT SA DEFINITION PAR EVAL ET ON APPLIOUE *)
       APPLY:=APPLY(EVAL(FN),ARGS)
@@ -856,9 +856,6 @@ FUNCTION EVAL(E:SGRAPHE): SGRAPHE;
     EVALUEE DES ARGUMENTS *)
 VAR
   S:SGRAPHE;
-  testReal:real;
-  errCode:Integer;
-  latome:sgraphe;
 BEGIN
   IF ERREUR THEN
     BEGIN

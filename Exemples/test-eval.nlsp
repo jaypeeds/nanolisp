@@ -1,0 +1,3 @@
+(PRINT 'Evaluation_de_liste_resultat_attendu_4)
+(EVAL '(+ 1 3))
+
