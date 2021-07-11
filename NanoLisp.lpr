@@ -34,6 +34,7 @@ CONST
   _ATAN='ATAN';
   _RAC='RAC';
   _ABS='ABS';
+  _PI='PI';
   EPSILON=1.0E-6;
 TYPE
   SMALLSTRING=STRING (*[MAXCHAINE]*) ;
@@ -68,6 +69,7 @@ VAR (* ---- Globales ---- *)
   NILE, TRU, AQUOTE, LAMBDA, S, M, PCONSOLE, ZERO, UN, PPI, NEANT:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
+  sPI:STRING;
 
 PROCEDURE PRINT(S:SGRAPHE); FORWARD;
 function isNumeric(const potentialNumeric: string): boolean; forward;
@@ -396,7 +398,7 @@ var
   errCode:integer;
   strig:sgraphe;
 begin
-  if numberp(smathentree) then
+  if numberp(smathentree) or nullp(smathentree) then
     begin
       val(nameOf(smathentree), angle, errCode);
       mathvalbrute:=angle;
@@ -444,6 +446,11 @@ function fatan(degres:SGRAPHE): SGRAPHE;
 begin
   fatan:=fmath(_ATAN,degres);
 end;
+function fpi: SGRAPHE;
+begin
+  fpi:=PPI;
+end;
+
 (* Affectation d'une variable *)
 FUNCTION EVLIS(ARGS: SGRAPHE): SGRAPHE; FORWARD;
 FUNCTION FSETQ(S:SGRAPHE): SGRAPHE;
@@ -767,7 +774,7 @@ BEGIN
       IF nameOf(FN)=_ATAN        THEN APPLY:=FATAN(EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_RAC         THEN APPLY:=FMATH(_RAC,EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_ABS         THEN APPLY:=FMATH(_ABS,EVAL(FCAR((ARGS)))) ELSE
-      IF nameOf(FN)='PI'         THEN APPLY:=PPI ELSE
+      IF nameOf(FN)=_PI          THEN APPLY:=FPI ELSE
       IF nameOf(FN)='READ'      THEN APPLY:=FREAD(INPUT) ELSE
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
@@ -905,7 +912,6 @@ PROCEDURE INIT;
 
 VAR
   OBCOUR, PPCONSOLE:PTOBLIST;
-  sPI: STRING;
 
 BEGIN
   TRACE:=FALSE;
