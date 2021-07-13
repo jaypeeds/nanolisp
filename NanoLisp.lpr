@@ -4,7 +4,7 @@ PROGRAM nanolisp(INPUT, OUTPUT);
 CONST
   MAXCHAINE=255;(* LES NOMS AURONT 12 CARACTERES MAXIMUM *)
   QT='''';
-  FD='->';
+  FD='~~>';
   GT='>';
   DOT='.';
   SPC=' ';
@@ -281,15 +281,73 @@ BEGIN
   ELSE
     FNEQ:=NILE;
 END;
-FUNCTION FGT(S1, S2: SGRAPHE): SGRAPHE;
-(* TESTE LEGALITE DES POINTEURS *)
+(* Comparaisons de valeurs numeriques => TRU ou NILE *)
+function fcompar(const op:string;s:sgraphe): sgraphe;
+var
+  rop1, rop2, rop3, testReal: real;
+  ok:boolean;
+  resultat: string;
+  errCode1, errCode2: integer;
+  s1, s2, s3: sgraphe;
+begin
+  if nullp(s) then (* on retourne l'element neutre de l'operation *)
+     fcompar:=TRU
+  else
+  begin
+    if atomp(s) or nullp(fcar(fcdr(s))) then
+       fcompar:=TRU
+    else
+    (* Une liste: < '(1 10 60) est vrai, car tous ordonnés *)
+      begin
+        s1:=fcar(s);
+        s2:=fcar(fcdr(s));
+        s3:=fcompar(op, fcdr(s));
+        val(nameOf(s1),rop1,errCode1);
+        val(nameOf(s2),rop2,errCode2);
+        if (errCode1<>0) or (errCode2<>0) then
+          fcompar:=ferreur(op,s)
+        else
+          begin
+           case op of
+             '>' :ok:=(rop1 > rop2) and (s3=TRU);
+             '>=':ok:=(rop1 >= rop2) and (s3=TRU);
+             '<' :ok:=(rop1 < rop2) and (s3=TRU);
+             '<=':ok:=(rop1 <= rop2) and (s3=TRU);
+           end;
+           if ok then
+             fcompar:=TRU
+           else
+             fcompar:=NILE;
+        end;
+      end;
+  end;
+end;
+
+FUNCTION FGT(S: SGRAPHE): SGRAPHE;
+(* COMPARE LES VALEURS *)
 
 BEGIN
-  IF nameOf(S1^.VAL)>nameOf(S2^.VAL) THEN
-    FGT:=TRU
-  ELSE
-    FGT:=NILE;
+  fgt:=fcompar('>', S);
 END;
+FUNCTION FGE(S:SGRAPHE): SGRAPHE;
+(* COMPARE LES VALEURS *)
+
+BEGIN
+  fge:=fcompar('>=', S);
+END;
+FUNCTION FLT(S:SGRAPHE): SGRAPHE;
+(* COMPARE LES VALEURS *)
+
+BEGIN
+  flt:=fcompar('<', S);
+END;
+FUNCTION FLE(S:SGRAPHE): SGRAPHE;
+(* COMPARE LES VALEURS *)
+
+BEGIN
+  fle:=fcompar('<=', S);
+END;
+
 FUNCTION FCONS(S1,S2: SGRAPHE): SGRAPHE;
 (* LE CONS *)
 (* S2 doit être une liste ou NILE ou un nombre *)
@@ -319,9 +377,10 @@ FUNCTION FDE (S: SGRAPHE): SGRAPHE;
     S^.CAR^.VAL:=FCONS(LAMBDA,FCDR(S));
     FDE:=FCAR(S);
   END;
+(* Les Quatre Operations Arithmetiques *)
 function fopari(const op:string;s:sgraphe): sgraphe;
 var
-  iop1, iop2, testReal: real;
+  rop1, rop2, testReal: real;
   resultat: string;
   errCode1, errCode2: integer;
   s1, s2: sgraphe;
@@ -338,7 +397,7 @@ begin
     if atomp(s) then
       begin
         if numberp(s) then
-          val(nameOf(s), iop1, errCode1);
+          val(nameOf(s), rop1, errCode1);
           if errCode1=0 then
             begin
               (* Si le nombre existe, on le réutilise *)
@@ -357,18 +416,18 @@ begin
     else (* Reduction de la liste par l'operation *)
       begin
         s1:=fopari(op,fcar(s));
-        val(nameOf(s1),iop1,errCode1);
+        val(nameOf(s1),rop1,errCode1);
         s2:=fopari(op,fcdr(s));
-        val(nameOf(s2),iop2,errCode2);
+        val(nameOf(s2),rop2,errCode2);
         if (errCode1<>0) or (errCode2<>0) then
           fopari:=ferreur(op,s)
         else
           begin
            case op of
-             PLUS:testReal:=iop1 + iop2;
-             MOINS:testReal:=iop1 - iop2;
-             MULT:testReal:=iop1 * iop2;
-             DIVIS: testReal:=iop1 / iop2;
+             PLUS:testReal:=rop1 + rop2;
+             MOINS:testReal:=rop1 - rop2;
+             MULT:testReal:=rop1 * rop2;
+             DIVIS: testReal:=rop1 / rop2;
            end;
            if (integerp(testReal, EPSILON)) then
              (* Convertir en entier *)
@@ -765,9 +824,9 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-      WRITE(TAB,'APPLY',GT);
+      WRITE(TAB,'APPLY:"');
       PRINT(FN);
-      WRITE(FD);
+      WRITE('"' +FD);
       PRINT(ARGS);
       WRITELN;
     END;
@@ -785,11 +844,14 @@ BEGIN
       IF nameOf(FN)='ATOM'      THEN APPLY:=FATOM(FCAR(ARGS)) ELSE
       IF nameOf(FN)='EQ'        THEN APPLY:=FEQ(FCAR(ARGS),FCAR(FCDR(ARGS))) ELSE
       IF nameOf(FN)='NEQ'       THEN APPLY:=FNEQ(FCAR(ARGS),FCAR(FCDR(ARGS))) ELSE
-      IF nameOf(FN)='>'         THEN APPLY:=FGT(FCAR(ARGS),FCAR(FCDR(ARGS))) ELSE
-      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(FCONS(ZERO, ARGS))) ELSE
-      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(FCONS(ZERO, ARGS))) ELSE
-      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(FCONS(UN, ARGS))) ELSE
-      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(FCONS(UN, ARGS))) ELSE
+      IF nameOf(FN)='>'         THEN APPLY:=FGT(EVLIS(ARGS)) ELSE
+      IF nameOf(FN)='>='         THEN APPLY:=FGE(EVLIS(ARGS)) ELSE
+      IF nameOf(FN)='<'         THEN APPLY:=FLT(EVLIS(ARGS)) ELSE
+      IF nameOf(FN)='<='         THEN APPLY:=FLE(EVLIS(ARGS)) ELSE
+      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(FCONS(ZERO,(FCONS(ZERO, ARGS))))) ELSE
+      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL((FCONS(ZERO,FCONS(ZERO, ARGS))))) ELSE
+      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(FCONS(UN, FCONS(UN, ARGS)))) ELSE
+      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(FCONS(UN, FCONS(UN, ARGS)))) ELSE
       IF nameOf(FN)=_SIN         THEN APPLY:=FSIN(EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_COS         THEN APPLY:=FCOS(EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_TAN         THEN APPLY:=FTAN(EVAL(FCAR((ARGS)))) ELSE
@@ -892,8 +954,9 @@ BEGIN
   IF TRACE THEN
     BEGIN
       WRITELN;
-      WRITE(TAB,'EVAL',GT);
+      WRITE(TAB,'EVAL:"');
       PRINT(E);
+      WRITE('"');
       WRITELN;
     END;
   IF atomp(E) THEN
@@ -927,7 +990,7 @@ BEGIN
   END;
   if trace then
     begin
-      write(tab,'=');print(eval);writeln;
+      write(tab,'#');print(eval);writeln;
     end;
 END;
 
