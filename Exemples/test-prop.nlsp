@@ -1,0 +1,12 @@
+'Creation_de_la_tortue_Leonardo
+(SETQ TORTUE 'Leonardo)
+'Creation_Nouvelle_Propriete_X_dans_Tortue_avec_valeur_100
+(SETF (GET TORTUE 'X) 100)
+'Creation_Nouvelle_Propriete_Y_dans_Tortue_avec_valeur_100
+(SETF (GET TORTUE 'Y) 100)
+'Liste_des_proprietes_de_Tortue'
+(PROPLIST TORTUE)
+'Extraction_de_la_valeur_de_la_propriete_X_de_Tortue
+(GETF T 'X)
+'Extraction_de_la_valeur_de_la_propriete_T_de_Tortue
+(GETF T 'Y)

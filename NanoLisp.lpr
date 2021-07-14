@@ -28,6 +28,7 @@ CONST
   _RAC='RAC';
   _ABS='ABS';
   EPSILON=1.0E-6;
+  OBSEP=SPC;
 TYPE
   SMALLSTRING=STRING (*[MAXCHAINE]*) ;
   TYPTOKEN=(PGAUCHE, PDROITE,APOS, SYMBOLE);
@@ -38,8 +39,15 @@ TYPE
 
   SGRAPHE = ^NOEUD;
 
+  PTOBLIST=^TYPOBLIST;
+  (* LA LISTE DES SEXPS N'EST PAS ICI UNE LISTE LISP *)
+  TYPOBLIST=RECORD
+    SEXP: SGRAPHE;
+    LIEN: PTOBLIST;
+   END;
+
   NOEUD=RECORD
-    PLIST:SGRAPHE;
+    PLIST:PTOBLIST;
     CASE SORTE :TYPEBASE OF
       ATOME:
         (PNAME:^SMALLSTRING; VAL: SGRAPHE);
@@ -47,25 +55,24 @@ TYPE
         (CAR,CDR: SGRAPHE);
     END;
     (* AVEC TOUS CES POINTEURS LE NOEUD DE BASE NE FAIT QUE 6 OCTETS !!! *)
-  PTOBLIST=^TYPOBLIST;
-    (* LA LISTE DES ATOMES N'EST PAS ICI UNE LISTE LISP *)
 
-  TYPOBLIST=RECORD
-    ATOME: SGRAPHE;
-    LIEN: PTOBLIST
-  END;
+
 
   (* Pour la compatibilité *)
   INTERACTIVE=TEXT;
 
-VAR (* ---- Globales ---- *)
+(* ----------- Globales -------------- *)
+VAR
   NILE, TRU, AQUOTE, LAMBDA, S, M, PCONSOLE, ZERO, UN, PPI, NEANT:SGRAPHE;
   OBLIST: PTOBLIST;
   FINSESS, ERREUR, TRACE: BOOLEAN;
   sPI:STRING;
 
+(***** Definitions anticipees **********)
 PROCEDURE PRINT(S:SGRAPHE); FORWARD;
-function isNumeric(const potentialNumeric: string): boolean; forward;
+function isNumeric(const potentialNumeric: string): boolean; FORWARD;
+FUNCTION EVAL(E:SGRAPHE):SGRAPHE;FORWARD;
+
 (********** PREDICATS ******************)
 function nullp(s:sgraphe): boolean;
 begin
@@ -106,7 +113,8 @@ function integerp(testReal, epsilon:real): boolean;
 begin
   integerp:=(abs(testReal - trunc(testReal)) < epsilon);
 end;
-(***** FONCTIONS UTILITAIRES ******)
+
+(******* FONCTIONS UTILITAIRES ********)
 function isNumeric(const potentialNumeric: string): boolean;
 (* Empruntée à RosettaCode.org *)
 var
@@ -129,12 +137,12 @@ begin
 end;
 function nameOf(S:sgraphe): SMALLSTRING;
 begin
-   nameOf:=S^.PNAME^;
+  nameOf:=S^.PNAME^
 end;
 function valueOf(S:sgraphe): SGRAPHE;
 begin
    (* Utilisable seulement à droite du := *)
-   valueOf:=S^.VAL;
+      valueOf:=S^.VAL
 end;
 function degresEnRadians(degres:real):real;
 begin
@@ -159,24 +167,26 @@ BEGIN
   FERREUR:= NILE;
 END;
 
-PROCEDURE OBPRINT;
-(* IMPRIME LA LISTE DES ATOMES CONNUS *)
-VAR
-  OBCOUR: PTOBLIST;
+PROCEDURE OBPRINT1(OBCOUR: PTOBLIST);
+(* IMPRIME LA LISTE DES SEXPS CONNUS d'une liste donnee *)
 
 BEGIN
-  OBCOUR:=OBLIST;
   WHILE (OBCOUR<>NIL) DO
     BEGIN
-      IF atomp(OBCOUR^.ATOME) THEN
-        WRITE(OBCOUR^.ATOME^.PNAME^,SPC);
-        OBCOUR:=OBCOUR^.LIEN;
+      (*WRITE(nameOf(OBCOUR^.SEXP), ': '),nameOf(valueOf(OBCOUR^.SEXP)), SPC);*)
+      PRINT(OBCOUR^.SEXP);
+      OBCOUR:=OBCOUR^.LIEN;
     END;
     WRITELN;
 END;
+PROCEDURE OBPRINT;
+(* IMPRIME LA LISTE DES SEXPS CONNUSv*)
+BEGIN
+   OBPRINT1(OBLIST);
+END;
 
-FUNCTION NOUVATOM(POSITION:PTOBLIST;NOM:SMALLSTRING):PTOBLIST;
-(* INSERE UN NOUVEL ATOME DANS LA LISTE A LA SUITE DE "POSITION" *)
+FUNCTION NOUVNOEUD(genre:TYPEBASE;POSITION:PTOBLIST;NOM:SMALLSTRING):PTOBLIST;
+(* INSERE UN NOUVEL SEXP DANS LA LISTE A LA SUITE DE "POSITION" *)
 VAR
   OBPREC,OBSUIV: PTOBLIST;
 BEGIN
@@ -184,42 +194,52 @@ BEGIN
   OBPREC:=POSITION;
   (* Scan Page 40 Col. 2 *)
   OBSUIV:=OBPREC^.LIEN;
-  (* ON CREE LE NOUVEL ATOME *)
+  (* ON CREE LE NOUVEL SEXP *)
   NEW(POSITION);
-  NEW(POSITION^.ATOME);
-  POSITION^.ATOME^.SORTE:= ATOME;
-  NEW(POSITION^.ATOME^.PNAME);
-  POSITION^.ATOME^.PNAME^:=NOM;
+  NEW(POSITION^.SEXP);
+  POSITION^.SEXP^.SORTE:= genre;
+  NEW(POSITION^.SEXP^.PNAME);
+  POSITION^.SEXP^.PNAME^:=NOM;
+  NEW(POSITION^.SEXP^.PLIST);
+  POSITION^.SEXP^.PLIST^.SEXP:=NILE;
   (* est-il auto-évalué ? *)
-  if numberp(POSITION^.ATOME) then   (* oui si c'est un nombre... *)
-     POSITION^.ATOME^.VAL:=POSITION^.ATOME
+  if numberp(POSITION^.SEXP) then   (* oui si c'est un nombre... *)
+     POSITION^.SEXP^.VAL:=POSITION^.SEXP
   else
-     POSITION^.ATOME^.VAL:= NIL;
+     POSITION^.SEXP^.VAL:=NIL;
   (* ON RACCROCHE DANS LA CHAINE *)
   OBPREC^.LIEN:=POSITION;
   POSITION^.LIEN:=OBSUIV;
-  (* ON REND L'ATOME CREE *)
-  NOUVATOM:=POSITION;
+  (* ON REND L'SEXP CREE *)
+  NOUVNOEUD:=POSITION;
+END;
+FUNCTION NOUVATOM(POSITION:PTOBLIST;NOM:SMALLSTRING):PTOBLIST;
+BEGIN
+    NOUVATOM:=NOUVNOEUD(ATOME,POSITION,NOM);
 END;
 
-FUNCTION FINDATOM(NOM: SMALLSTRING) : SGRAPHE;
-(* TROUVE L'ATOME DU NON DONNE OU REND NIL *)
+
+FUNCTION FINDSEXP2(NOM: SMALLSTRING; PTCOUR:PTOBLIST) : SGRAPHE;
+(* TROUVE L'SEXP DU NOM DONNE dans une liste donnee OU REND NIL *)
 VAR
   CONT:BOOLEAN;
-  PTCOUR: PTOBLIST;
 
 BEGIN
-  PTCOUR :=OBLIST;
   CONT:=TRUE;
   WHILE (PTCOUR<>NIL) AND CONT DO
   BEGIN
-    CONT:=(PTCOUR^.ATOME^.PNAME^<>NOM);
+    CONT:=(nameOf(PTCOUR^.SEXP)<>NOM);
     IF CONT THEN PTCOUR:=PTCOUR^.LIEN;
   END;
   IF PTCOUR=NIL THEN
-    FINDATOM:=NILE
+    FINDSEXP2:=NILE
   ELSE
-    FINDATOM:=PTCOUR^.ATOME;
+    FINDSEXP2:=PTCOUR^.SEXP;
+END;
+FUNCTION FINDSEXP(NOM: SMALLSTRING) : SGRAPHE;
+(* TROUVE L'ATOME DU NOM DONNE OU REND NIL *)
+BEGIN
+   FINDSEXP:=FINDSEXP2(NOM, OBLIST);
 END;
 
 (**********FONCTIONS DE BASE ***********)
@@ -284,9 +304,8 @@ END;
 (* Comparaisons de valeurs numeriques => TRU ou NILE *)
 function fcompar(const op:string;s:sgraphe): sgraphe;
 var
-  rop1, rop2, rop3, testReal: real;
+  rop1, rop2: real;
   ok:boolean;
-  resultat: string;
   errCode1, errCode2: integer;
   s1, s2, s3: sgraphe;
 begin
@@ -377,7 +396,7 @@ FUNCTION FDE (S: SGRAPHE): SGRAPHE;
     S^.CAR^.VAL:=FCONS(LAMBDA,FCDR(S));
     FDE:=FCAR(S);
   END;
-(* Les Quatre Operations Arithmetiques *)
+(*********** Les Quatre Operations Arithmetiques **********)
 function fopari(const op:string;s:sgraphe): sgraphe;
 var
   rop1, rop2, testReal: real;
@@ -401,12 +420,12 @@ begin
           if errCode1=0 then
             begin
               (* Si le nombre existe, on le réutilise *)
-              s1:=FINDATOM(nameOf(s));
+              s1:=FINDSEXP(nameOf(s));
               if not nullp(s1) then
                 fopari:=s1
               else
                 (* Sinon on le crée *)
-                fopari:=nouvatom(oblist, nameOf(s))^.atome;
+                fopari:=nouvatom(oblist, nameOf(s))^.SEXP;
             end
         else
         begin
@@ -435,11 +454,11 @@ begin
            else
              str(testReal, resultat);
 
-           s1:=FINDATOM(resultat);
+           s1:=FINDSEXP(resultat);
            if not nullp(s1) then
              fopari:=s1
            else
-             fopari:=NOUVATOM(oblist, resultat)^.atome;
+             fopari:=NOUVATOM(oblist, resultat)^.SEXP;
         end;
       end;
   end;
@@ -460,13 +479,13 @@ function fdiv(s:sgraphe): sgraphe;
 begin
   fdiv:=fopari(DIVIS,s);
 end;
-(* FONCTIONS TRIGONOMETRIQUE *)
+(********* FONCTIONS MATHEMATIQUES ***********)
 function fmath(func:string; smathentree:SGRAPHE): SGRAPHE;
 var
   angle, mathval, mathvalbrute:real;
   resultat:string;
   errCode:integer;
-  strig:sgraphe;
+  pMath:sgraphe;
 begin
   if numberp(smathentree) or nullp(smathentree) then
     begin
@@ -488,11 +507,11 @@ begin
         else
           str(mathval, resultat);
 
-        strig:=FINDATOM(resultat);
-        if not nullp(strig) then
-             fmath:=strig
+        pMath:=FINDSEXP(resultat);
+        if not nullp(pMath) then
+             fmath:=pMath
            else
-             fmath:=NOUVATOM(oblist, resultat)^.atome;
+             fmath:=NOUVATOM(oblist, resultat)^.SEXP;
         end
       else
          ferreur(func+'-1', smathentree);
@@ -542,16 +561,72 @@ END;
 (*********** PROPERTY LIST *******************)
 function fget(S:SGRAPHE):SGRAPHE;
 var
-  id, prop:SGRAPHE;
-
+  propname:SMALLSTRING;
+  pprop:SGRAPHE;
+  ppList:PTOBLIST;
 begin
   if nullp(S) then
     fget:=NILE
   else
     begin
-
+      ppList:=fcar(S)^.plist;
+      (* Il faut sauter par-dessus l'atome QUOTE d'ou le FCDR supplementaire *)
+      propname:=nameOf(fcar(fcdr(fcar(fcdr(S)))));
+      pprop:=FINDSEXP2(propname, pplist);
+      if pprop=NILE then
+        fget:=NILE
+      else
+        fget:=pprop;
     end;
 end;
+
+function fsetf(pprop:SGRAPHE):sgraphe;
+(* Syntaxe: (SETF (GET SYMBOL 'PROP) PROPVAL)*)
+var
+  propName: string;
+  propVal, propExp, sexpProp, owner:SGRAPHE;
+
+begin
+  propExp:=fcar(pprop);
+  owner:=fcar(fcdr(propExp));
+  sexpProp:=eval(propExp);
+  if nullp(sexpProp) then
+    begin
+      (* La propriete n'existe pas encore on la cree *)
+      propname:=nameOf(fcar(fcdr(fcar(fcdr(fcdr(propExp))))));
+      sexpProp:=NOUVATOM(owner^.plist, propname)^.SEXP;
+    end;
+  propVal:=valueOf(fcar(fcdr(pprop)));
+  sexpProp^.val:=propVal;
+  fsetf:=sexpProp;
+end;
+function fgetf(S:sgraphe):sgraphe;
+(* Syntaxe: (GETF SYMBOL 'PROP) qui retourne PROPVAL *)
+var
+  propname:SMALLSTRING;
+  pprop:SGRAPHE;
+  ppList:PTOBLIST;
+begin
+  if nullp(S) then
+    fgetf:=NILE
+  else
+    begin
+      ppList:=fcar(S)^.plist;
+      (* Il faut sauter par-dessus l'atome QUOTE d'ou le FCDR supplementaire *)
+      propname:=nameOf(fcar(fcdr(fcar(fcdr(S)))));
+      pprop:=FINDSEXP2(propname, pplist);
+      if pprop=NILE then
+        fgetf:=NILE
+      else
+        fgetf:=valueOf(pprop);
+    end;
+end;
+
+procedure proplist(owner:sgraphe);
+begin
+  obprint1(owner^.plist);
+end;
+
 (*********** PROCEDURES D'ENTREE-SORTIES *****)
 FUNCTION FREAD(VAR INFILE: INTERACTIVE): SGRAPHE;
 (* LE NOM READ EST DEJA RESERVE PAR PASCAL *)
@@ -605,10 +680,10 @@ VAR
         (* Scan Page 41 Col. 2 *)
         (*UN NOM A ETE LU - EST-IL CONNU ? *)
         TOKEN:=SYMBOLE;
-        LUATOME:=FINDATOM(LUCHAINE);
+        LUATOME:=FINDSEXP(LUCHAINE);
         (* C'EST UN NOUVEAU NOM -> ON L'ENREGISTRE *)
         IF nullp(LUATOME) THEN
-          READATOM:=NOUVATOM(OBLIST, LUCHAINE)^.ATOME
+          READATOM:=NOUVATOM(OBLIST, LUCHAINE)^.SEXP
         ELSE
           READATOM:=LUATOME;
       END; (*ELSE LUCHAINE*)
@@ -674,9 +749,9 @@ PROCEDURE PRINT(S:SGRAPHE);
            IF BLANCPRINT THEN WRITE(SPC);
            (* LE NOM DE L'ATOME *)
            if not nullp(S) then
-              WRITE(nameOf(S))
+              WRITE(nameOf(S),OBSEP)
            else
-              WRITE(NUL,SPC);
+              WRITE(NUL,OBSEP);
            BLANCPRINT:=FALSE;
          END;
        (* Corps de PRINT1 *)
@@ -687,30 +762,29 @@ PROCEDURE PRINT(S:SGRAPHE);
               IF atomp(S) THEN
                  BEGIN
                  (* IMPRESSION DE L'ATOME SEUL *)
-                    PRINTATOM(S);
-                    BLANCPRINT:=TRUE;
-                 END ELSE
-                 BEGIN
-                    IF quotep(FCAR(S)) THEN
-                    BEGIN
-                      (* TRANSFORMATION INVERSE DE LA LECTURE :
-                      ((QUOTE) (ATOME)) => '(ATOME)
-                      *)
-                      WRITE(SPC,QT);
-                      PRINT(FCAR(FCDR(S))); (* ON REPART COMME POUR UNE NOUVELLE LISTE *)
-                    END ELSE
-                    BEGIN
-                      IF (NOT nullp(S^.CAR)) AND listp(S^.CAR) AND not quotep(S^.CAR^.CAR) THEN
-                         WRITE(PG); (* SUITE DE LISTE *)
+                   PRINTATOM(S);
+                   BLANCPRINT:=TRUE;
+                 END
+              ELSE IF quotep(FCAR(S)) THEN
+                BEGIN
+                  (* TRANSFORMATION INVERSE DE LA LECTURE :
+                  ((QUOTE) (ATOME)) => '(ATOME)
+                  *)
+                  WRITE(SPC,QT);
+                  PRINT(FCAR(FCDR(S))); (* ON REPART COMME POUR UNE NOUVELLE LISTE *)
+                END
+              ELSE
+                BEGIN
+                  IF (NOT nullp(S^.CAR)) AND listp(S^.CAR) AND not quotep(S^.CAR^.CAR) THEN
+                     WRITE(PG); (* SUITE DE LISTE *)
 
-                      PRINT1(FCAR(S)); (* IMPRESSION DU CAR *)
+                  PRINT1(FCAR(S)); (* IMPRESSION DU CAR *)
 
-                      IF nullp(FCDR(S)) THEN
-                         WRITE(PD) (* FIN DE LISTE *)
-                      ELSE
-                         PRINT1(FCDR(S)); (* IMPRESSION DU CDR *)
-                    END; (* NOT QUOTE *)
-                 END;
+                  IF nullp(FCDR(S)) THEN
+                     WRITE(PD) (* FIN DE LISTE *)
+                  ELSE
+                     PRINT1(FCDR(S)); (* IMPRESSION DU CDR *)
+                END; (* NOT QUOTE *)
        END;
   (* Corps de PRINT *)
    BEGIN
@@ -754,7 +828,7 @@ BEGIN
        (* Scan Page 42 Col. 2 *)
 END;
 
-FUNCTION EVAL(E:SGRAPHE):SGRAPHE;FORWARD;
+(******** CHARGEMENT D'UN FICHIER OU LECTURE CONSOLE ****)
 FUNCTION FLOAD (FILENAME:SGRAPHE):SGRAPHE;
 VAR
   INFILE: INTERACTIVE;
@@ -848,10 +922,10 @@ BEGIN
       IF nameOf(FN)='>='         THEN APPLY:=FGE(EVLIS(ARGS)) ELSE
       IF nameOf(FN)='<'         THEN APPLY:=FLT(EVLIS(ARGS)) ELSE
       IF nameOf(FN)='<='         THEN APPLY:=FLE(EVLIS(ARGS)) ELSE
-      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(FCONS(ZERO,(FCONS(ZERO, ARGS))))) ELSE
-      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL((FCONS(ZERO,FCONS(ZERO, ARGS))))) ELSE
-      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(FCONS(UN, FCONS(UN, ARGS)))) ELSE
-      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(FCONS(UN, FCONS(UN, ARGS)))) ELSE
+      IF nameOf(FN)=PLUS         THEN APPLY:=FADD(EVAL(FCONS(ZERO, ARGS))) ELSE
+      IF nameOf(FN)=MOINS        THEN APPLY:=FSUB(EVAL(FCONS(ZERO, ARGS))) ELSE
+      IF nameOf(FN)=MULT         THEN APPLY:=FMULT(EVAL(FCONS(UN, ARGS))) ELSE
+      IF nameOf(FN)=DIVIS        THEN APPLY:=FDIV(EVAL(FCONS(UN, ARGS))) ELSE
       IF nameOf(FN)=_SIN         THEN APPLY:=FSIN(EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_COS         THEN APPLY:=FCOS(EVAL(FCAR((ARGS)))) ELSE
       IF nameOf(FN)=_TAN         THEN APPLY:=FTAN(EVAL(FCAR((ARGS)))) ELSE
@@ -863,14 +937,6 @@ BEGIN
       IF nameOf(FN)='PRINT'     THEN BEGIN
                                         PRINT(FCAR(ARGS));
                                         APPLY:=NEANT;
-                                     END ELSE
-      IF nameOf(FN)='OBLIST'    THEN BEGIN
-                                        APPLY:=NILE;
-                                        OBPRINT;
-                                     END ELSE
-      IF nameOf(FN)='QUIT'      THEN BEGIN
-                                        APPLY:=NILE;
-                                        FINSESS:=TRUE;
                                      END ELSE
       IF nameOf(FN)='LOAD'      THEN BEGIN
                                        if (quotep(fcar(fcar(args)))) then
@@ -973,12 +1039,24 @@ BEGIN
       IF nameOf(S)='COND'       THEN EVAL:=EVCOND(FCDR(E)) ELSE
       IF nameOf(S)='TRACE'      THEN BEGIN
                                       TRACE:=TRUE;
-                                      EVAL:=FINDATOM('TRACE') END ELSE
+                                      EVAL:=FINDSEXP('TRACE') END ELSE
       IF nameOf(S)='UNTRACE'    THEN BEGIN
                                       TRACE:=FALSE;
                                       (* Scan Page 43 Col. 2 *)
-                                      EVAL:=FINDATOM('UNTRACE') END ELSE
+                                      EVAL:=FINDSEXP('UNTRACE') END ELSE
       IF nameOf(S)='SETQ'       THEN EVAL:=FSETQ(FCDR(E)) ELSE
+      IF nameOf(S)='GET'       THEN EVAL:=FGET(FCDR(E)) ELSE
+      IF nameOf(S)='GETF'       THEN EVAL:=FGETF(FCDR(E)) ELSE
+      IF nameOf(S)='SETF'       THEN EVAL:=FSETF(FCDR(E)) ELSE
+      IF nameOf(S)='PROPLIST'   THEN BEGIN EVAL:=NILE; PROPLIST(FCAR(FCDR(E))); END ELSE
+      IF nameOf(S)='OBLIST'    THEN BEGIN
+                                        EVAL:=NILE;
+                                        OBPRINT;
+                                     END ELSE
+      IF nameOf(S)='QUIT'      THEN BEGIN
+                                        EVAL:=NILE;
+                                        FINSESS:=TRUE;
+                                     END ELSE
       IF nameOf(S)='DE'         THEN EVAL:=FDE(FCDR(E)) ELSE
         begin
              if trace then
@@ -1008,17 +1086,17 @@ BEGIN
   NEW(NILE^.PNAME);
   NILE^.PNAME^:='()';
   NEW(OBCOUR);
-  OBCOUR^.ATOME:=NILE;
+  OBCOUR^.SEXP:=NILE;
   (* ON CONSERVE L'ENTREE DANS LA LISTE AVEC OBLIST *)
   OBLIST:=OBCOUR;
-  OBCOUR:=NOUVATOM(OBCOUR, 'T'); TRU:=OBCOUR^.ATOME;
-  OBCOUR:=NOUVATOM(OBCOUR, 'QUOTE'); AQUOTE:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, 'T'); TRU:=OBCOUR^.SEXP;
+  OBCOUR:=NOUVATOM(OBCOUR, 'QUOTE'); AQUOTE:=OBCOUR^.SEXP;
   OBCOUR:=NOUVATOM(OBCOUR, 'CAR');
   OBCOUR:=NOUVATOM(OBCOUR, 'CDR');
   OBCOUR:=NOUVATOM(OBCOUR, 'CONS');
   OBCOUR:=NOUVATOM(OBCOUR, 'ATOM');
   OBCOUR:=NOUVATOM(OBCOUR, 'EQ');
-  OBCOUR:=NOUVATOM(OBCOUR, 'LAMBDA'); LAMBDA:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, 'LAMBDA'); LAMBDA:=OBCOUR^.SEXP;
   OBCOUR:=NOUVATOM(OBCOUR, 'READ');
   OBCOUR:=NOUVATOM(OBCOUR, 'PRINT');
   OBCOUR:=NOUVATOM(OBCOUR, 'COND');
@@ -1028,17 +1106,17 @@ BEGIN
   OBCOUR:=NOUVATOM(OBCOUR, 'LOAD');
   OBCOUR:=NOUVATOM(OBCOUR, 'OBLIST');
   OBCOUR:=NOUVATOM(OBCOUR, 'QUIT');
-  OBCOUR:=NOUVATOM(OBCOUR, '0'); ZERO:=OBCOUR^.ATOME;
-  OBCOUR:=NOUVATOM(OBCOUR, '1'); UN:=OBCOUR^.ATOME;
-  OBCOUR:=NOUVATOM(OBCOUR, 'PI'); PPI:=OBCOUR^.ATOME;
-  OBCOUR:=NOUVATOM(OBCOUR, sPI); PPI^.VAL:=OBCOUR^.ATOME;
-  OBCOUR:=NOUVATOM(OBCOUR, VIDE); NEANT:=OBCOUR^.ATOME;
+  OBCOUR:=NOUVATOM(OBCOUR, '0'); ZERO:=OBCOUR^.SEXP;
+  OBCOUR:=NOUVATOM(OBCOUR, '1'); UN:=OBCOUR^.SEXP;
+  OBCOUR:=NOUVATOM(OBCOUR, 'PI'); PPI:=OBCOUR^.SEXP;
+  OBCOUR:=NOUVATOM(OBCOUR, sPI); PPI^.VAL:=OBCOUR^.SEXP;
+  OBCOUR:=NOUVATOM(OBCOUR, VIDE); NEANT:=OBCOUR^.SEXP;
 
   TRU^.VAL:=TRU;
   NILE^.VAL:=NILE;
   NEW(PPCONSOLE);
   PPCONSOLE:=NOUVATOM(PPCONSOLE, 'CONSOLE');
-  PCONSOLE:=PPCONSOLE^.ATOME;
+  PCONSOLE:=PPCONSOLE^.SEXP;
 END;(*INIT*)
 
 (* Corps du programme principal *)

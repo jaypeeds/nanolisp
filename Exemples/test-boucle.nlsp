@@ -1,6 +1,12 @@
-(DE REPETE(N ACTION) (COND ((> N 0) (EVAL ACTION) (REPETE (- N 1) ACTION)) (T (PRINT '.))))
+(DE REPETE(N ACTION)
+  (COND
+    ((> N 0)
+      (EVAL ACTION)
+      (REPETE (- N 1) ACTION))
+     (T (PRINT '.))))
 'Imprimer_4_fois_bonjour
 (REPETE 4 '(PRINT 'Bonjour_!))
+
 'Imprimer_3_fois_la_liste_des_objets
 (REPETE 3 '(OBLIST))
 'Imprimer_l_indice_de_boucle_decroissant
