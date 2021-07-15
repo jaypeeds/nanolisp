@@ -75,7 +75,7 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
 - Si on a affaire à un atome, alors on peut s'intéresser à son nom et à sa valeur.
 - Si on a affaire à une liste, alors on peut s'intéresser à son premier élément, nommé historiquement le CAR, et au reste de la liste, le CDR, qui est toujours une liste. Parfois, une fonction est écrite pour argument atome. Si on l'utilise avec une liste, il faut penser à en extraire le CAR, puis le CAR du CDR, etc..
 
-- Construire une liste : (CONS *atome* *liste*) le constructeur de liste CONS est rarement néncessaire, les listes sont implicites grâce aux parenthèses. Il ne faut jamais ajouter de parenthèses en pensant priorité dans l'évaluation. La plupart du temps l'écriture la plus simple est la seule correcte. C'est parfois une difficulté pour les débutants (dont je suis).
+- Construire une liste : (CONS *atome* *liste*) le constructeur de liste CONS est rarement nécessaire, les listes sont implicites grâce aux parenthèses. Il ne faut jamais ajouter de parenthèses en pensant priorité dans l'évaluation. La plupart du temps l'écriture la plus simple est la seule correcte, et c'est parfois une difficulté pour les débutants (dont je suis).
 
 - Création d'une nouvelle fonction :
  - (DE *fonction*(*un seul argument atome ou liste*) (*Instructions*)) ou...
@@ -112,8 +112,8 @@ C'est exactement la formule désormais classique d'un interprète:
 
   C'est un *REPL*
 
-## Comment étendre le langage ?
+## Comment étendre le langage
 Pour assurer leur composabilité, dirait-on de nos jours, "monadique", toutes les fonctions exposables dans le langage doivent accepter des S-EXP en entrée et en sortie, le type Pascal SGRAPHE, elles sont nommées F-suivi du nom exposé: FCAR FCDR FCONS, etc.. Puis le nom exposé doit être ajouté dans la liste des tests, soit de EVAL, soit de APPLY.
 
 ## En guise de conclusion
-Parfois, il faut envisager la création d'un petit langage, en oubliant ce que l'on sait de nos jours de la construction des compilateurs, l'analyse lexicale, la grammaire, la construction de l'arbre syntaxique, le travail de Chomsky a été publié plus tard... toute une science inconnue des pionniers de l'informatique. En repartant des bases historiques, on redécouvre une forme de simplicité et son génie, qui permettrait (et personne ne s'en prive) de recréer ce parcours historique dans n'importe quel langage moderne.
+Parfois, il faut envisager la création d'un petit langage, en oubliant ce que l'on sait de nos jours de la construction des compilateurs, l'analyse lexicale, la grammaire, la construction de l'arbre syntaxique, comme si le travail de Chomsky n'était pas encore connu... toute une science que  les pionniers de l'informatique ne pouvaient connaître. En repartant des bases historiques, on redécouvre une forme de simplicité et son génie, qui permet (et personne ne s'en prive) de recréer ce parcours historique dans n'importe quel langage moderne.
