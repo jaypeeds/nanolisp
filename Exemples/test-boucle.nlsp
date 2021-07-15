@@ -3,7 +3,7 @@
     ((> N 0)
       (EVAL ACTION)
       (REPETE (- N 1) ACTION))
-     (T (PRINT '.))))
+    (T ()))))
 'Imprimer_4_fois_bonjour
 (REPETE 4 '(PRINT 'Bonjour_!))
 

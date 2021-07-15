@@ -9,8 +9,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="nanolisp"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="577"/>
-        <CursorPos Y="600"/>
+        <TopLine Value="130"/>
+        <CursorPos X="7" Y="146"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit0>
