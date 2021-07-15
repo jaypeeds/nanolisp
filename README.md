@@ -57,7 +57,8 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
    - Texte sans blanc précédé d'une seule apostrophe ou quote
    - Nombre entier ou réel
    - référence à un autre symbole
-   - () est une valeur spéciale, ni atome, ni liste. On l'appelle NIL. C'est un élément neutre dans toute opération de composition.
+   - () est une valeur spéciale, ni atome, ni liste. On l'appelle NIL. C'est un élément neutre dans toute opération de composition. C'est aussi la valeur booléenne Faux.
+   - T est la valeur booléenne Vrai.
  - Liste : plusieurs valeurs entre parenthèses.
 
 
@@ -69,7 +70,7 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
 - Valeur d'un symbole
  - (Ville) répondra 'Paris.
 - Exécution conditionnelle: (COND ((test) actions) ((test) actions)...)
- - Toutes les sous-listes dont le test est vrai sont évaluées, la valeur de retour est celle de la dernière sous-liste éxécutée.
+ - Toutes les sous-listes dont le test est vrai sont évaluées, la valeur de retour est celle de la dernière sous-liste éxécutée. Un test est une S-EXP qui s'évalue à une liste vide pour Faux ou non-vide pour Vrai.
 
 - Si on a affaire à un atome, alors on peut s'intéresser à son nom et à sa valeur.
 - Si on a affaire à une liste, alors on peut s'intéresser à son premier élément, nommé historiquement le CAR, et au reste de la liste, le CDR, qui est toujours une liste. Parfois, une fonction est écrite pour argument atome. Si on l'utilise avec une liste, il faut penser à en extraire le CAR, puis le CAR du CDR, etc..
