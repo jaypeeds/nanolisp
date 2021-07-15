@@ -112,7 +112,7 @@ Le résultat est imprimé, puis on recommence. C'est exactement la formule déso
   - Imprimer le résultat ou *Print*
   - Boucler ou *Loop*...
 
-  C'est un *REPL*
+  C'est un *REPL*.
 
 ## Comment étendre le langage
 Pour assurer leur composabilité, dirait-on de nos jours, "monadique", toutes les fonctions exposables dans le langage doivent accepter des S-EXP en entrée et en sortie, le type Pascal SGRAPHE, elles sont nommées F-suivi du nom exposé: FCAR FCDR FCONS, etc.. Puis le nom exposé doit être ajouté dans la liste des tests, soit de EVAL, soit de APPLY. La fonction INIT permet d'enrichir le "dictionnaire" initial. La commande (OBLIST) permet de le lister.
