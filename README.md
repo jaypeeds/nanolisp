@@ -65,15 +65,16 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
 - Tout code LISP est aussi une liste entre parenthèses. C'est la notion dite d'homoiconocité du langage.
 
 - Création d'un symbole: (SETQ *nom* *valeur*)
- - (SETQ Ville 'Paris) L'apostrophe bloque l'évaluation, Paris est une valeur, et pas une référence à un autre symbole.
- - (SETQ LesNeveuxDeDonald '(Riri Fifi Loulou))
+  - (SETQ Ville 'Paris) L'apostrophe bloque l'évaluation, Paris est une valeur, et pas une référence à un autre symbole.
+  - (SETQ LesNeveuxDeDonald '(Riri Fifi Loulou))
 - Valeur d'un symbole
- - (Ville) répondra 'Paris.
+  - (Ville) répondra 'Paris.
 - Exécution conditionnelle: (COND ((test) actions) ((test) actions)...)
  - Toutes les sous-listes dont le test est vrai sont évaluées, la valeur de retour est celle de la dernière sous-liste éxécutée. Un test est une S-EXP qui s'évalue à une liste vide pour Faux ou non-vide pour Vrai.
 
 - Si on a affaire à un atome, alors on peut s'intéresser à son nom et à sa valeur.
-- Si on a affaire à une liste, alors on peut s'intéresser à son premier élément, nommé historiquement le CAR, et au reste de la liste, le CDR, qui est toujours une liste. Parfois, une fonction est écrite pour argument atome. Si on l'utilise avec une liste, il faut penser à en extraire le CAR, puis le CAR du CDR, etc..
+
+- Si on a affaire à une liste, alors on peut s'intéresser à son premier élément, toujours un atome, nommé historiquement le CAR, et au reste de la liste, le CDR, qui est toujours une liste. Parfois, une fonction est écrite pour argument atome. Si on l'utilise avec une liste, il faut penser à en extraire le CAR, puis le CAR du CDR, etc..
 
 - Construire une liste : (CONS *atome* *liste*) le constructeur de liste CONS est rarement nécessaire, les listes sont implicites grâce aux parenthèses. Il ne faut jamais ajouter de parenthèses en pensant priorité dans l'évaluation. La plupart du temps l'écriture la plus simple est la seule correcte, et c'est parfois une difficulté pour les débutants (dont je suis).
 
