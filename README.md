@@ -80,8 +80,8 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
 - Construire une liste : (CONS *atome* *liste*) le constructeur de liste CONS est rarement nécessaire, les listes sont implicites grâce aux parenthèses. Il ne faut jamais ajouter de parenthèses en pensant priorité dans l'évaluation. La plupart du temps l'écriture la plus simple est la seule correcte, et c'est parfois une difficulté pour les débutants (dont je suis).
 
 - Création d'une nouvelle fonction :
- - (DE *fonction*(*un seul argument atome ou liste*) (*Instructions*)) ou...
- - (DE *fonction*(*arg1* *arg2*...) (*Instructions*))
+  - (DE *fonction*(*un seul argument atome ou liste*) (*Instructions*)) ou...
+  - (DE *fonction*(*arg1* *arg2*...) (*Instructions*))
 
 L'interprète crèe une liste LIFO pour "empiler" les valeurs des arguments pour permettre la récursion. C'est la fonction PAIRLIS du code Pascal.
 
