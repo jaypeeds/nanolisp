@@ -69,8 +69,9 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
   - (SETQ LesNeveuxDeDonald '(Riri Fifi Loulou))
 - Valeur d'un symbole
   - (Ville) répondra 'Paris.
+
 - Exécution conditionnelle: (COND ((test) actions) ((test) actions)...)
- - Toutes les sous-listes dont le test est vrai sont évaluées, la valeur de retour est celle de la dernière sous-liste éxécutée. Un test est une S-EXP qui s'évalue à une liste vide pour Faux ou non-vide pour Vrai.
+  - Toutes les sous-listes dont le test est vrai sont évaluées, la valeur de retour est celle de la dernière sous-liste éxécutée. Un test est une S-EXP qui s'évalue à une liste vide pour Faux ou non-vide pour Vrai.
 
 - Si on a affaire à un atome, alors on peut s'intéresser à son nom et à sa valeur.
 
