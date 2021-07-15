@@ -54,9 +54,9 @@ Petite note sur la lecture clavier, il faut 2 return pour conclure une saisie, �
 Cette version du langage est sensible à la casse, les mots-clés doivent être écrits en majuscules.
 - Pas de notion de variables, ni de types, mais notion de symboles nommés, et de deux formes de valeurs:
  - Atome : valeur isolée,
-   - Texte sans blanc précédé d'une seule apostrophe ou quote
+   - Texte sans blanc précédé d'une seule apostrophe ou quote. En mémoire, une liste est utilisée car un atome nommé QUOTE est inséré devant le texte sans blanc, puis enlevé automatique lors de l'impression.
    - Nombre entier ou réel
-   - référence à un autre symbole
+   - Référence à un autre symbole
    - () est une valeur spéciale, ni atome, ni liste. On l'appelle NIL. C'est un élément neutre dans toute opération de composition. C'est aussi la valeur booléenne Faux.
    - T est la valeur booléenne Vrai.
  - Liste : plusieurs valeurs entre parenthèses.
@@ -83,28 +83,28 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
 
 L'interprète crèe une liste LIFO pour "empiler" les valeurs des arguments pour permettre la récursion. C'est la fonction PAIRLIS du code Pascal.
 
-- Les nombres n'existent pas comme tels. A la création d'un atome, un test de "numéricité" est appliqué à son nom, et si le nom peut se traduire en valeur numérique, son nom est aussi sa valeur, le symbole est dit auto-évalué. En natif, 0, 1 font partie du "dictionnaire" initial de symboles. Les autres nombres sont créés à la demande, comme des symnboles ordinaires, sauf qu'ils sont auto-evalués. Les chaînes de caractères ou toutes valeur "littérale" sont aussi auto-évaluées.
+Les nombres n'existent pas comme tels. A la création d'un atome, un test de "numéricité" est appliqué à son nom, et si le nom peut se traduire en valeur numérique, son nom est aussi sa valeur, le symbole est dit auto-évalué. En natif, 0, 1 font partie du "dictionnaire" initial de symboles. Les autres nombres sont créés à la demande, comme des symboles ordinaires, sauf qu'ils sont auto-evalués. Les chaînes de caractères ou toutes valeur "littérale" sont aussi auto-évaluées.
 
 Le dossier Exemples contient les snippets ayant servi pendant le debug et l'élaboration des extensions.
 
 ## Comment l'interprète fonctionne
-- Le modèle mémoire : La mémoire est structurée comme une liste du langage hôte (Linked List), d'un type de base qui est la S-EXP simplement constitué d'un cellule "info" et d'un lien "suivant".
+Le modèle mémoire : La mémoire est structurée comme une liste du langage hôte (Linked List), d'un type de base qui est la S-EXP simplement constitué d'un cellule "info" et d'un lien "suivant".
 OBLIST --> [Info/Suivant] --> [Info/Suivant] --> null du langage hôte (NIL en Pascal, 0 en C). Le lien Suivant n'est manipulable que par le langage hôte.
 Info contient un pointeur vers une cellule de mémoire de "donnée" qui est "typée":
 [Type/union de types de même taille mémoire]
 - Soit [ATOME/Nom/Valeur], Nom et Valeur sont des chaînes de caractères du langage hôte.
 - Soit [LISTE/CAR/CDR], CAR et CDR sont des pointeurs vers d'autres S-EXP.
-- Pour implémenter les propriétés, j'ai ajouté un pointeur sur une liste "privée" de S-EXP, représentant les propriétés:
+
+Pour implémenter les propriétés, j'ai ajouté un pointeur sur une liste "privée" de S-EXP, représentant les propriétés:
 [Propriétés/Type/Deux champs du type]
 - L'interprète lit un atome jusqu'à un séparateur blanc, tabulation, ou saut à la ligne, puis le teste:
- - Est-ce un atome auto-évalué ? si oui le créer en connaissance de sa particularité.
+ - Est-ce un atome auto-évalué ? Si oui le créer en connaissance de sa particularité.
  - Est-ce une forme spéciale ? DE SETQ...qui va modifier l'environnement et la traiter comme il convient.
- - Les fonctions sont des listes: Le CAR pointe vers un atome portant le nom. Le CDR contient deux liste, celle des arguments, celle de la définition. Pour dénoter que cette dernière est "éxécutable", un atome nommé LAMBDA est inséré en tête de la liste de définition de la fonction.
+ - Les fonctions sont aussi des listes: Le CAR pointe vers un atome portant le nom. Le CDR contient deux liste, celle des arguments, celle de la définition. Pour dénoter que cette dernière est "éxécutable", un atome nommé LAMBDA est inséré en tête de la liste de définition de la fonction.
 - Sinon, le reste de la liste de la commande est lu à la console ou d'un fichier.
  - Le CAR est envisagé comme étant un appel de fonction et le CDR comme sa liste d'arguments. Le tout est alors passé à la fonction APPLY(*fonction*, *arguments*).
- - Le résultat est imprimé.
 
-C'est exactement la formule désormais classique d'un interprète:
+Le résultat est imprimé, puis on recommence. C'est exactement la formule désormais classique d'un interprète:
   - Lire ou *Read*
   - Evaluer ou *Evaluate*
   - Imprimer le résultat ou *Print*
@@ -113,7 +113,7 @@ C'est exactement la formule désormais classique d'un interprète:
   C'est un *REPL*
 
 ## Comment étendre le langage
-Pour assurer leur composabilité, dirait-on de nos jours, "monadique", toutes les fonctions exposables dans le langage doivent accepter des S-EXP en entrée et en sortie, le type Pascal SGRAPHE, elles sont nommées F-suivi du nom exposé: FCAR FCDR FCONS, etc.. Puis le nom exposé doit être ajouté dans la liste des tests, soit de EVAL, soit de APPLY.
+Pour assurer leur composabilité, dirait-on de nos jours, "monadique", toutes les fonctions exposables dans le langage doivent accepter des S-EXP en entrée et en sortie, le type Pascal SGRAPHE, elles sont nommées F-suivi du nom exposé: FCAR FCDR FCONS, etc.. Puis le nom exposé doit être ajouté dans la liste des tests, soit de EVAL, soit de APPLY. La fonction INIT permet d'enrichir le "dictionnaire" initial. La commande (OBLIST) permet de le lister.
 
 ## En guise de conclusion
 Parfois, il faut envisager la création d'un petit langage, en oubliant ce que l'on sait de nos jours de la construction des compilateurs, l'analyse lexicale, la grammaire, la construction de l'arbre syntaxique, comme si le travail de Chomsky n'était pas encore connu... toute une science que  les pionniers de l'informatique ne pouvaient connaître. En repartant des bases historiques, on redécouvre une forme de simplicité et son génie, qui permet (et personne ne s'en prive) de recréer ce parcours historique dans n'importe quel langage moderne.
