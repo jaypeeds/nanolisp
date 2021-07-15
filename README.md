@@ -98,12 +98,13 @@ Info contient un pointeur vers une cellule de mémoire de "donnée" qui est "typ
 [Propriétés/Type/Deux champs du type]
 - L'interprète lit un atome jusqu'à un séparateur blanc, tabulation, ou saut à la ligne, puis le teste:
  - Est-ce un atome auto-évalué ? si oui le créer en connaissance de sa particularité.
- - Est-ce une forme spéciale ? DE SETQ...qui va modifier l'environnement et les traiter comme il convient.
+ - Est-ce une forme spéciale ? DE SETQ...qui va modifier l'environnement et la traiter comme il convient.
  - Les fonctions sont des listes: Le CAR pointe vers un atome portant le nom. Le CDR contient deux liste, celle des arguments, celle de la définition. Pour dénoter que cette dernière est "éxécutable", un atome nommé LAMBDA est inséré en tête de la liste de définition de la fonction.
 - Sinon, le reste de la liste de la commande est lu à la console ou d'un fichier.
- - Le CAR est envisagé comme étant un appel de fonction et le CDR comme sa liste d'arguments. Le tout est alors passé à la fonction APPLY.
+ - Le CAR est envisagé comme étant un appel de fonction et le CDR comme sa liste d'arguments. Le tout est alors passé à la fonction APPLY(*fonction*, *arguments*).
  - Le résultat est imprimé.
- - C'est exactement la formule désormais classique d'un interprète:
+
+C'est exactement la formule désormais classique d'un interprète:
   - Lire ou *Read*
   - Evaluer ou *Evaluate*
   - Imprimer le résultat ou *Print*
