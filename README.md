@@ -90,21 +90,21 @@ Les nombres n'existent pas comme tels. A la création d'un atome, un test de "nu
 Le dossier Exemples contient les snippets ayant servi pendant le debug et l'élaboration des extensions.
 
 ## Comment l'interprète fonctionne
-Le modèle mémoire : La mémoire est structurée comme une liste du langage hôte (Linked List), d'un type de base qui est la S-EXP simplement constitué d'un cellule "info" et d'un lien "suivant".
-OBLIST --> [Info/Suivant] --> [Info/Suivant] --> null du langage hôte (NIL en Pascal, 0 en C). Le lien Suivant n'est manipulable que par le langage hôte.
-Info contient un pointeur vers une cellule de mémoire de "donnée" qui est "typée":
-[Type/union de types de même taille mémoire]
-- Soit [ATOME/Nom/Valeur], Nom et Valeur sont des chaînes de caractères du langage hôte.
-- Soit [LISTE/CAR/CDR], CAR et CDR sont des pointeurs vers d'autres S-EXP.
+Le modèle mémoire : La mémoire est structurée comme une liste chaînée du langage hôte (Linked List), d'un type de base qui est la S-EXP simplement constituée d'une cellule "info" et d'un pointeur "suivant".
+OBLIST --> [Info/Suivant] --> [Info/Suivant] --> null du langage hôte (NIL en Pascal, 0 en C). Le lien "Suivant" n'est manipulable que par le langage hôte.
+"Info" contient un pointeur vers une cellule de mémoire de "donnée" qui est "typée":
+[Type/Union de types occupant la même taille mémoire]
+- Soit [ATOME/Nom/Valeur], "Nom" est une chaîne de caractères du langage hôte, "Valeur" un pointeur vers une autre S-EXP.
+- Soit [LISTE/CAR/CDR], CAR et CDR sont tous les deux des pointeurs vers d'autres S-EXP.
 
-Pour implémenter les propriétés, j'ai ajouté un pointeur sur une liste "privée" de S-EXP, représentant les propriétés:
+Pour implémenter les propriétés, j'ai ajouté un pointeur vers une liste "privée" de S-EXP, représentant les propriétés:
 [Propriétés/Type/Deux champs du type]
-- L'interprète lit un atome jusqu'à un séparateur blanc, tabulation, ou saut à la ligne, puis le teste:
+- L'interprète lit un atome jusqu'à un séparateur blanc, tabulation, ou saut à la ligne, puis le qualifie:
  - Est-ce un atome auto-évalué ? Si oui le créer en connaissance de sa particularité.
  - Est-ce une forme spéciale ? DE SETQ...qui va modifier l'environnement et la traiter comme il convient.
  - Les fonctions sont aussi des listes: Le CAR pointe vers un atome portant le nom. Le CDR contient deux liste, celle des arguments, celle de la définition. Pour dénoter que cette dernière est "éxécutable", un atome nommé LAMBDA est inséré en tête de la liste de définition de la fonction.
 - Sinon, le reste de la liste de la commande est lu à la console ou d'un fichier.
- - Le CAR est envisagé comme étant un appel de fonction et le CDR comme sa liste d'arguments. Le tout est alors passé à la fonction APPLY(*fonction*, *arguments*).
+ - Par défaut, après toutes les autres possibilités, le CAR est envisagé comme étant un nom de fonction et le CDR comme sa liste d'arguments. Le nom est remplacé par la liste commençant par LAMBDA, le tout est alors passé à la fonction APPLY(EVAL(*nom de fonction*), *arguments*), ce qui se traduit comme APPLY(*LAMBDA définition*, *Arguments*).
 
 Le résultat est imprimé, puis on recommence. C'est exactement la formule désormais classique d'un interprète:
   - Lire ou *Read*
