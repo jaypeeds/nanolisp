@@ -74,7 +74,7 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
   - (DE *fonction*(*un seul argument atome ou liste*) (*Instructions*)) ou...
   - (DE *fonction*(*arg1* *arg2*...) (*Instructions*))
 
-La récursivité est possible, gérée par le langage hôte. Avant chaque appel de lambda, la valeur des arguments formels est permutée avec celles des nouveaux arguments. C'est la fonction PAIRLIS du code Pascal.
+La récursivité est possible, gérée par le langage hôte. Avant et après chaque appel de lambda, la valeur des arguments formels est permutée avec celles des nouveaux arguments. C'est la fonction PAIRLIS du code Pascal.
 
 Les nombres n'existent pas comme tels. A la création d'un atome, un test de "numéricité" est appliqué à son nom, et si le nom peut se traduire en valeur numérique, son nom est aussi sa valeur, le symbole est dit auto-évalué. En natif, 0, 1 font partie du "dictionnaire" initial de symboles. Les autres nombres sont créés à la demande, comme des symboles ordinaires, sauf qu'ils sont auto-evalués. Les chaînes de caractères ou toutes valeur "littérale" sont aussi auto-évaluées.
 
