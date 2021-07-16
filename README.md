@@ -28,6 +28,7 @@ Il a fallu faire des ajustements, l'interpréte ne lisait pas la console mais un
 Les conventions de nommage ont été rendues plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR mais pour être exploitables, ces opérateurs devraient tous avoir un résultat de type S-Exp, ou SGRAPHE dans ce code. FNULL ne respectait pas cette convention et renvoyait un booléen du langage hôte inexploittable par l'interprète.
 
 Petite note sur la lecture clavier, il faut 2 return pour conclure une saisie, à cause du test EOF qui réclame cette saisie supplémentaire.
+
 La dernière version a subi un peu de refactoring.
 
 ## Et ensuite ?
@@ -73,7 +74,7 @@ Cette version du langage est sensible à la casse, les mots-clés doivent être 
   - (DE *fonction*(*un seul argument atome ou liste*) (*Instructions*)) ou...
   - (DE *fonction*(*arg1* *arg2*...) (*Instructions*))
 
-L'interprète crèe une liste LIFO pour "empiler" les valeurs des arguments pour permettre la récursion. C'est la fonction PAIRLIS du code Pascal.
+La récursivité est possible, gérée par le langage hôte. Avant chaque appel de lambda, la valeur des arguments formels est permutée avec celles des nouveaux arguments. C'est la fonction PAIRLIS du code Pascal.
 
 Les nombres n'existent pas comme tels. A la création d'un atome, un test de "numéricité" est appliqué à son nom, et si le nom peut se traduire en valeur numérique, son nom est aussi sa valeur, le symbole est dit auto-évalué. En natif, 0, 1 font partie du "dictionnaire" initial de symboles. Les autres nombres sont créés à la demande, comme des symboles ordinaires, sauf qu'ils sont auto-evalués. Les chaînes de caractères ou toutes valeur "littérale" sont aussi auto-évaluées.
 
