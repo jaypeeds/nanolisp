@@ -1,6 +1,6 @@
 //
-//  NanoLogo.c
-//  nanoLogo
+//  NanoLisp.c
+//  nanoLisp
 //
 //  Created by Jean-Pierre De Soza on 15/07/2021.
 //
