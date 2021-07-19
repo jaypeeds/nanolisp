@@ -33,12 +33,12 @@ PtObList new_atom(const PtObList position, String name) {
     new->info->plist = NULL;
     new->info->kind = ATOM;
     new->info->unode.atom = malloc(sizeof(atom_t));
-    new->info->unode.atom->name = name;
+    NAME_OF(new->info) = name;
     // Make a number an auto-evaluated, value = self
     if (NUMBERP(new->info))
-        new->info->unode.atom->val = new->info;
+        VALUE_OF(new->info) = new->info;
      else
-        new->info->unode.atom->val = NULL;
+        VALUE_OF(new->info) = NULL;
     
     // Update old & new position (or not)
     if (prev != NULL)
@@ -132,7 +132,7 @@ Sexp f_cons(Sexp s1, Sexp s2) {
 }
 // Print out an atom's name
 void print_atom(Sexp s, String format) {
-    printf(format, s->unode.atom->name);
+    printf(format, NAME_OF(s));
 }
 
 void print1(Sexp s, String format) {
