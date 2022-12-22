@@ -24,7 +24,7 @@ L'IDE de choix pour le Pascal, de nos jours, est Lazarus. Sur Mac, j'ai essayé,
 Si on considère le fait que la plupart des implémentations initiales de Lisp ont été écrites en Assembleurs divers, Pascal, c'est presque de la triche ! Il existe des versions plus récentes, écrites en C, mais elles ont souvent une perspective moderne et avec la connaissance actuelle des langages de programmation (provenant de C++/Java). La démarche est différente lorsqu'on s'attache à suivre le chemin historique : Les S-Exp et leurs sept opérateurs quote, atom, eq, car, cdr, cons et cond.  
 
 ## Le bilan de la restauration
-Il a fallu faire des ajustements, l'interpréte ne lisait pas la console mais un fichier source conventionnel SOURCE.NLSP. Mais ce n'est plus le cas depuis que la console es opérationnelle. La plupart des fonctions, notamment la création et la définition de fonctions par l'utilisateur, sont opérationnelles.
+Il a fallu faire des ajustements, l'interpréte ne lisait pas la console mais un fichier source conventionnel SOURCE.NLSP. Mais ce n'est plus le cas depuis que la console est opérationnelle. La plupart des fonctions, notamment la création et la définition de fonctions par l'utilisateur, sont opérationnelles.
 Les conventions de nommage ont été rendues plus strictes: Les primitives sont nommées F suivi de la primitive : FCAR, FCDR mais pour être exploitables, ces opérateurs devraient tous avoir un résultat de type S-Exp, ou SGRAPHE dans ce code. FNULL ne respectait pas cette convention et renvoyait un booléen du langage hôte inexploittable par l'interprète.
 
 Petite note sur la lecture clavier, il faut 2 return pour conclure une saisie, à cause du test EOF qui réclame cette saisie supplémentaire.
